@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zynvaded Combat Team Builder</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>Zynvaded Combat Team Builder</h1>
+    <div class="header-sub">Pick a faction, choose 3 units (LEADER, SUPPORT, SCOUT)</div>
+    <div class="header-sub">To use MERCZ, first select a faction then select the Mercz button. You can select a Mercz unit as one of your 3 unit Combat Team, or as an additional 4th model slot.</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="factions" id="factionTiles" aria-label="Factions">
+      <!-- faction tiles injected here -->
+    </section>
+
+    <section class="panel">
+      <div class="panel-left">
+        <div class="controls">
+          <div class="current-faction" id="currentFactionLabel">Select a faction</div>
+          <div class="actions">
+            <button id="clearBtn" disabled title="Clear selections (Ctrl+Z)">Clear Selection</button>
+            <button id="confirmBtn" disabled class="primary">Confirm Team</button>
+          </div>
+        </div>
+
+        <!-- Mercz mode controls: shown when Mercz is active -->
+        <div id="merczModeControls" class="mercz-controls" hidden>
+          <label><input type="radio" name="merczMode" id="merczInline" value="inline" checked> Mercz in Combat Team</label>
+          <label style="margin-left:12px"><input type="radio" name="merczMode" id="merczFourth" value="fourth"> Mercz as 4th model slot</label>
+          <button id="merczInfoBtn" class="mercz-info-btn" aria-expanded="false" aria-controls="merczTooltip">i</button>
+          <div id="merczTooltip" class="tooltip" role="status" hidden>
+            <strong>Mercz Modes</strong>
+            <p><strong>Mercz in Combat Team:</strong> Select LEADER, SUPPORT, and SCOUT (3 total). A Mercz unit may be selected as one of these units.</p>
+            <p><strong>Mercz as 4th model slot:</strong> You may pick an additional Mercz unit as a 4th model, producing a 4-model Combat Team.</p>
+          </div>
+        </div>
+
+        <div id="unitGrid" class="unit-grid" aria-live="polite">
+          <!-- unit cards injected here -->
+        </div>
+      </div>
+
+      <aside class="panel-right">
+        <h3>Selected Team (0/3)</h3>
+        <div id="selectedList" class="selected-list">
+          <!-- selected cards here -->
+        </div>
+        <div class="composition-hint" id="compHint">
+          Slots: LEADER, SUPPORT, SCOUT
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="app-footer"></footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

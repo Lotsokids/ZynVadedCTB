@@ -1,0 +1,134 @@
+:root{
+  --bg:#0b0f14;
+  --card:#0f1720;
+  --muted:#9aa6b2;
+  --accent:#6ee7b7;
+  --accent-2:#60a5fa;
+  --danger:#ff6b6b;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+  background:linear-gradient(180deg,#071018 0%, #09131a 100%);
+  color:#e6eef6;
+  -webkit-font-smoothing:antialiased;
+}
+.app-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.03);}
+.app-header h1{margin:0;font-size:20px;letter-spacing:0.6px}
+.header-sub{color:var(--muted);font-size:13px;margin-top:6px}
+.container{padding:20px;display:flex;flex-direction:column;gap:18px}
+.factions{display:flex;gap:12px;flex-wrap:wrap}
+.faction-tile{width:300px;min-height:160px;background:rgba(255,255,255,0.02);border-radius:10px;padding:18px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,border .12s ease}
+.faction-tile:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(2,6,23,0.6)}
+.faction-icon{width:104px;height:104px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;flex:0 0 auto}
+.faction-icon img{width:100%;height:100%;object-fit:contain;border-radius:8px}
+
+/* Make faction image background white and reduce padding so art fits */
+.faction-icon img{background:#fff;padding:6px}
+
+/* Active/selected faction tile: thicker border */
+.faction-tile.active{box-shadow:0 18px 44px rgba(96,165,250,0.18);transform:translateY(-8px);border:2px solid rgba(96,165,250,0.28)}
+.faction-tile.active .faction-name{color:var(--accent-2)}
+.faction-info{flex:1}
+.faction-name{font-weight:800;font-size:16px}
+.faction-desc{
+  font-size:13px;color:var(--muted);
+  display:block;
+  /* clamp to 2 lines by default */
+  overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;
+}
+/* show more description when tile has .expanded */
+.faction-tile.expanded .faction-desc{-webkit-line-clamp:6;line-clamp:6}
+.faction-tile.expanded{background:rgba(255,255,255,0.025)}
+
+.panel{display:flex;gap:18px}
+.panel-left{flex:1}
+.panel-right{width:320px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:8px}
+.controls{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.actions button{margin-left:6px}
+button{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:6px;cursor:pointer}
+button.primary{background:var(--accent);color:#022; border:none}
+button:disabled{opacity:.45;cursor:not-allowed}
+
+.unit-grid{display:flex;flex-direction:column;gap:18px}
+.slot-row{display:flex;flex-direction:column;gap:8px}
+.slot-header{font-weight:700;color:var(--accent-2);font-size:14px}
+.slot-cards{display:flex;gap:12px;flex-wrap:wrap}
+.slot-cards .unit-card{flex:0 0 220px}
+.slot-empty{color:var(--muted);padding:8px}
+
+.unit-card{position:relative;background:var(--card);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease;border:1px solid rgba(255,255,255,0.02)}
+.unit-card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.6)}
+.unit-art{height:110px;border-radius:6px;background:linear-gradient(135deg, rgba(90,90,110,0.14), rgba(20,30,40,0.14));display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+.unit-art img{width:100%;height:100%;object-fit:contain;border-radius:6px}
+.unit-card.mercz{
+  /* Match faction-tile active style but use orange tint */
+  box-shadow: 0 18px 44px rgba(255,165,0,0.12);
+  transform: translateY(-6px);
+  border: 2px solid rgba(255,165,0,0.28);
+  border-radius:8px;
+  background: linear-gradient(180deg, rgba(255,250,240,0.02), var(--card));
+}
+.unit-card.mercz .unit-name{
+  color: #ffd9b3;
+}
+
+/* Zed-Mercz variant: give a purple/pink tint and distinct badge */
+.unit-card.mercz-zed-mercz{
+  box-shadow: 0 18px 44px rgba(167,139,250,0.12);
+  border: 2px solid rgba(167,139,250,0.22);
+  background: linear-gradient(180deg, rgba(162,135,255,0.02), var(--card));
+}
+.unit-card.mercz-zed-mercz .unit-name{ color: #e9d7ff; }
+.mercz-badge{position:absolute;right:8px;top:8px;background:rgba(255,165,0,0.12);color:#ffb84d;padding:4px 6px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid rgba(255,165,0,0.12)}
+.unit-card.mercz-zed-mercz .mercz-badge{ background:rgba(167,139,250,0.12); color:#c9b3ff; border-color: rgba(167,139,250,0.12); }
+
+/* Tooltip and info button for Mercz mode explanation */
+.mercz-info-btn{display:inline-block;margin-left:12px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.03);color:var(--muted);border:1px solid rgba(255,255,255,0.04);font-size:12px;line-height:18px;text-align:center;cursor:pointer}
+.mercz-info-btn:focus{outline:2px solid rgba(255,165,0,0.18)}
+.tooltip{position:relative;max-width:320px;background:rgba(8,10,12,0.96);color:#fff;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);font-size:13px;margin-top:8px}
+.tooltip p{margin:6px 0;color:var(--muted);font-size:13px}
+.tooltip strong{color:#fff}
+.tooltip[hidden]{opacity:0;transform:scale(.96);visibility:hidden;pointer-events:none}
+.tooltip:not([hidden]){opacity:1;transform:scale(1);visibility:visible;pointer-events:auto;transition:opacity .12s ease, transform .12s ease}
+
+/* Position tooltip absolutely relative to the controls and add a small badge for mercz */
+.mercz-controls{position:relative;display:inline-flex;align-items:center}
+.tooltip{position:absolute;right:0;top:34px;max-width:360px;z-index:60;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+.mercz-badge{position:absolute;right:8px;top:8px;background:rgba(255,165,0,0.12);color:#ffb84d;padding:4px 6px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid rgba(255,165,0,0.12)}
+
+/* Toast notifications */
+.toast{position:fixed;left:50%;transform:translateX(-50%) translateY(0);bottom:28px;background:linear-gradient(180deg,#0f1720,#0b1220);color:#fff;padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 12px 30px rgba(2,6,23,0.6);z-index:999;opacity:0;pointer-events:none;transition:opacity .18s ease, transform .18s ease}
+.toast.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(-6px)}
+.unit-meta{display:flex;justify-content:space-between;align-items:center}
+.unit-name{font-weight:700}
+.slot-pill{font-size:12px;padding:4px 6px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted)}
+.unit-card.selected{outline:3px solid rgba(110,231,183,0.12);box-shadow:0 8px 30px rgba(110,231,183,0.06)}
+
+.selected-list{display:flex;flex-direction:column;gap:8px;margin-top:8px;min-height:160px}
+.selected-item{display:flex;gap:8px;align-items:center;padding:8px;border-radius:6px;background:rgba(255,255,255,0.02)}
+.sel-art{width:52px;height:52px;border-radius:6px;background:linear-gradient(135deg,#0b1220,#123);display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.sel-art img{width:100%;height:100%;object-fit:cover;border-radius:6px}
+.sel-meta{flex:1}
+.small-muted{font-size:12px;color:var(--muted)}
+
+.composition-hint{margin-top:10px;font-size:13px;color:var(--muted)}
+
+.mercz-controls{margin-top:10px;color:var(--muted);font-size:13px}
+.mercz-controls label{cursor:pointer}
+
+@media (max-width:900px){
+  .panel{flex-direction:column}
+  .panel-right{width:100%}
+}
+
+/* Faction icon colors */
+.faction-zn{background:linear-gradient(135deg,#2dd4bf,#06b6d4);color:#042f33}
+.faction-zd{background:linear-gradient(135deg,#f472b6,#a78bfa);color:#2b022b}
+.faction-tr{background:linear-gradient(135deg,#a3e635,#4d7c0f);color:#071500}
+.faction-sk{background:linear-gradient(135deg,#60a5fa,#7c3aed);color:#031032}
+.faction-mc{background:linear-gradient(135deg,#f97316,#ef4444);color:#2b0800}
+
+.footer{padding:12px}
