@@ -1,11 +1,11 @@
 // Zynvaded Combat Team Builder - app logic
 (function(){
   const FACTIONS = [
-    { id:'kyllal', name:"Kyll'al", desc:'Fast assault specialists. Precision and mobility.', cls:'faction-zn', img: "resources/factions/Kyll'al.png" },
-    { id:'savm', name:"Sav'm", desc:'Fast assault specialists. Precision and mobility.', cls:'faction-zn', img: 'resources/factions/Sav\'m.png' },
-    { id:'zedz', name:'Zedz', desc:'Hive-minded shock troops. Swarm and overwhelm.', cls:'faction-zd', img: 'resources/factions/Zedz.png' },
-    { id:'terra', name:'Terra', desc:'Armored heavy units with powerful tech.', cls:'faction-tr', img: 'resources/factions/Terra.png' },
-    { id:'skaylz', name:"Skayl'z", desc:'Stealth and electronic warfare experts.', cls:'faction-sk', img: "resources/factions/Skayl'z.png" },
+    { id:'kyllal', name:"Kyll'al", desc:"Kill 'em all, let Zred'Gaz sort 'em out!", cls:'faction-zn', img: "resources/factions/Kyll'al.png" },
+    { id:'savm', name:"Sav'm", desc:"Want no part of an invasion as in Savin' our butts.", cls:'faction-zn', img: 'resources/factions/Sav\'m.png' },
+    { id:'zedz', name:'Zedz', desc:'Dead Zyn and Terra warriors + Pesticides = Zedz', cls:'faction-zd', img: 'resources/factions/Zedz.png' },
+    { id:'terra', name:'Terra', desc:'This is our planet - BUGGER OFF!', cls:'faction-tr', img: 'resources/factions/Terra.png' },
+    { id:'skaylz', name:"Skayl'z", desc:'Warlike tribe of many different species of reptile.', cls:'faction-sk', img: "resources/factions/Skayl'z.png" },
     { id:'mercz', name:'Mercz', desc:'Flexible mercenaries. Versatile contracts.', cls:'faction-mc', img: 'resources/factions/Mercz.png' },
   ];
 
@@ -196,7 +196,9 @@
   function getPdfPath(unit){
     if(!unit) return '';
     const fname = PDF_MAP[unit.id] || (encodeURIComponent(unit.name) + '.pdf');
-    return `resources/pdf/${fname}`;
+    // Append a cache-busting timestamp so clicking Stats opens the latest file
+    const base = `resources/pdf/${fname}`;
+    return base + '?_cb=' + Date.now();
   }
 
   // App state
@@ -441,6 +443,11 @@
     }
     // Set current faction
     state.currentFaction = fid;
+    // Reflect active faction on the body element so CSS can react (e.g., selected card tint)
+    try{
+      if(state.currentFaction) document.body.setAttribute('data-faction', state.currentFaction);
+      else document.body.removeAttribute('data-faction');
+    }catch(e){}
     currentFactionLabel.textContent = 'Faction: ' + (FACTIONS.find(x=>x.id===fid)?.name||'');
     // Ensure primary active faction is set (keep mercz active if present)
     const keepMercz = state.activeFactions.includes('mercz');
@@ -886,10 +893,16 @@
         selectedList.appendChild(it);
       });
 
-  // Update header count
+    // Update header: show Current Control BP for Zedz in the header instead of the 'Selected Team' label
     const h = document.querySelector('.panel-right h3');
     const maxAllowed = ((state.merczMode==='fourth' && state.activeFactions.includes('mercz')) ? 4 : 3);
-    h.textContent = `Selected Team (${state.selected.length}/${maxAllowed})`;
+    if(h){
+      if(state.currentFaction === 'zedz'){
+        h.textContent = `Control BP Remaining: ${state.currentControlBP === null ? '-' : state.currentControlBP}`;
+      } else {
+        h.textContent = `Selected Team (${state.selected.length}/${maxAllowed})`;
+      }
+    }
 
     // Confirm enable rules:
     // - inline: exactly 3 and one of each slot
@@ -906,17 +919,11 @@
       confirmBtn.disabled = false;
     }
 
-    // show Current Control BP for Zedz in the right panel
+    // Remove any legacy .control-bp element when present; header now shows the value for Zedz
     const rightPanel = document.querySelector('.panel-right');
     if(rightPanel){
       const existing = rightPanel.querySelector('.control-bp');
       if(existing) existing.remove();
-      if(state.currentFaction === 'zedz'){
-        const cb = document.createElement('div');
-        cb.className = 'control-bp';
-        cb.textContent = `Current Control BP: ${state.currentControlBP === null ? '-' : state.currentControlBP}`;
-        rightPanel.appendChild(cb);
-      }
     }
   }
 
@@ -983,16 +990,26 @@
       const pdfjs = window.pdfjsLib;
       const { jsPDF } = window;
 
-      // render first page of a PDF url to a PNG dataURL
+      // render first page of a PDF url to a PNG dataURL and return metadata about the PDF page
       async function renderPdfToPng(url){
-        const resp = await fetch(url);
+        // Append a cache-busting query parameter so browsers (and intermediate caches) fetch the
+        // most recent PDF file instead of returning a stale cached copy.
+        const sep = url.indexOf('?') === -1 ? '?' : '&';
+        const fetchUrl = url + sep + '_cb=' + Date.now();
+        const resp = await fetch(fetchUrl);
         if(!resp.ok) throw new Error('Failed to fetch ' + url);
         const buf = await resp.arrayBuffer();
         const loadingTask = pdfjs.getDocument({data: buf});
         const srcDoc = await loadingTask.promise;
         const page = await srcDoc.getPage(1);
-        const scale = 2.0;
-        const viewport = page.getViewport({scale});
+        // capture the page's view box in PDF points (1 point = 1/72 inch)
+        const viewBox = (page.view && page.view.length === 4) ? page.view : page.getViewport({scale:1}).view;
+        const pageWidthPts = Math.abs(viewBox[2] - viewBox[0]);
+        const pageHeightPts = Math.abs(viewBox[3] - viewBox[1]);
+
+        // render at a reasonable pixel scale for crisp images
+        const renderScale = 2.0;
+        const viewport = page.getViewport({scale: renderScale});
         const canvas = document.createElement('canvas');
         canvas.width = Math.ceil(viewport.width);
         canvas.height = Math.ceil(viewport.height);
@@ -1001,7 +1018,24 @@
         await renderTask.promise;
         const dataUrl = canvas.toDataURL('image/png');
         try{ page.cleanup && page.cleanup(); srcDoc.cleanup && srcDoc.cleanup(); } catch(e){}
-        return dataUrl;
+
+        // compute sizes in inches
+        const widthInches = pageWidthPts / 72;
+        const heightInches = pageHeightPts / 72;
+
+        // Debug: report what we fetched and its measured size so you can tell if old PDFs are still being used
+        try{ console.debug('renderPdfToPng fetched', fetchUrl, '=>', {widthInches, heightInches, pageWidthPts, pageHeightPts, pixelWidth: canvas.width, pixelHeight: canvas.height}); }catch(e){}
+
+        return {
+          dataUrl,
+          pageWidthPts,
+          pageHeightPts,
+          widthInches,
+          heightInches,
+          // keep the pixel dims as well in case they're useful
+          pixelWidth: canvas.width,
+          pixelHeight: canvas.height,
+        };
       }
 
       // Collect selected units in slot-priority order: LEADER, SUPPORT, SCOUT, MERCZ
@@ -1012,7 +1046,7 @@
       const ordered = [].concat(leaders, supports, scouts, mercs);
       if(ordered.length === 0) throw new Error('No selected units to combine');
 
-      // Render every selected unit's PDF first page to an image in the ordered sequence
+      // Render every selected unit's PDF first page to an image (with metadata)
       const images = [];
       for(const u of ordered){
         images.push(await renderPdfToPng(getPdfPath(u)));
@@ -1020,17 +1054,61 @@
 
       // Create jsPDF document (landscape 11" x 8.5") using inches as units
       const doc = new jsPDF({orientation:'landscape', unit:'in', format:[11,8.5]});
-      const colW = 3.66; // specified per-unit width in inches
-      const colH = 8.5;
+      const pageW = doc.internal.pageSize.getWidth(); // 11
+      const pageH = doc.internal.pageSize.getHeight(); // 8.5
+      const baseCols = 3;
+      const slotW = pageW / baseCols; // base slot width
 
-      // Place images 3-per-page, left-to-right columns
-      for(let pageStart = 0, pageIndex = 0; pageStart < images.length; pageStart += 3, pageIndex++){
-        if(pageIndex > 0) doc.addPage([11,8.5], 'landscape');
-        for(let col = 0; col < 3; col++){
-          const idx = pageStart + col;
-          if(idx >= images.length) continue;
-          const x = col * colW;
-          doc.addImage(images[idx], 'PNG', x, 0, colW, colH);
+      // Layout algorithm: determine how many base slots each image needs based on its native PDF width
+      // then place left-to-right, wrapping pages when necessary. Preserve aspect ratio; scale down if
+      // the computed height would exceed page height.
+      let colCursor = 0;
+      let pageIndex = 0;
+      for(let i = 0; i < images.length; i++){
+        const img = images[i];
+        // Determine required slots by comparing native width in inches to slot width
+        let reqSlots = Math.max(1, Math.round(img.widthInches / slotW));
+        if(reqSlots > baseCols) reqSlots = baseCols;
+
+        // If not enough space on this row, start a new page/row
+        if(reqSlots > (baseCols - colCursor)){
+          // new page
+          doc.addPage([pageW, pageH], 'landscape');
+          pageIndex++;
+          colCursor = 0;
+        }
+
+        const x = colCursor * slotW;
+        // width in inches that the image will occupy
+        let drawW = reqSlots * slotW;
+        // compute height in inches preserving PDF aspect ratio: height = drawW * (pageHeightPts / pageWidthPts)
+        const ptsW = img.pageWidthPts || (img.widthInches * 72);
+        const ptsH = img.pageHeightPts || (img.heightInches * 72);
+        const aspect = ptsH / ptsW;
+        let drawH = drawW * aspect;
+
+        // If the resulting height would overflow the page, scale down to fit page height
+        if(drawH > pageH){
+          const scaleFactor = pageH / drawH;
+          drawH = pageH;
+          drawW = drawW * scaleFactor;
+        }
+
+        // Center vertically
+        const y = Math.max(0, (pageH - drawH) / 2);
+
+        // Add the image at computed position and size
+        doc.addImage(img.dataUrl, 'PNG', x, y, drawW, drawH);
+
+        // advance cursor
+        colCursor += reqSlots;
+        // If column cursor has filled the row, start a new page for the next image
+        if(colCursor >= baseCols){
+          if(i < images.length - 1){
+            doc.addPage([pageW, pageH], 'landscape');
+            pageIndex++;
+          }
+          colCursor = 0;
         }
       }
 

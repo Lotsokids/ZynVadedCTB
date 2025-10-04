@@ -31,6 +31,33 @@ body{
 /* Active/selected faction tile: thicker border */
 .faction-tile.active{box-shadow:0 18px 44px rgba(96,165,250,0.18);transform:translateY(-8px);border:2px solid rgba(96,165,250,0.28)}
 .faction-tile.active .faction-name{color:var(--accent-2)}
+
+/* Per-faction active border color overrides (use dataset id selectors so no JS changes required) */
+.faction-tile.active[data-id="kyllal"]{
+  border:2px solid rgba(255,255,255,0.92);
+  box-shadow:0 18px 44px rgba(255,255,255,0.14);
+}
+.faction-tile.active[data-id="savm"]{
+  border:2px solid rgba(110,231,183,0.92); /* green */
+  box-shadow:0 18px 44px rgba(110,231,183,0.14);
+}
+.faction-tile.active[data-id="terra"]{
+  border:2px solid rgba(96,165,250,0.92); /* blue */
+  box-shadow:0 18px 44px rgba(96,165,250,0.14);
+}
+.faction-tile.active[data-id="zedz"]{
+  border:2px solid rgba(200,200,200,0.86); /* grey */
+  box-shadow:0 18px 44px rgba(200,200,200,0.10);
+}
+.faction-tile.active[data-id="skaylz"]{
+  border:2px solid rgba(255, 0, 0, 0.86); /* red */
+  box-shadow:0 18px 44px rgba(139, 4, 4, 0.1);
+}
+.faction-tile.active[data-id="mercz"]{
+  border:2px solid rgba(255,165,0,0.92); /* orange */
+  box-shadow:0 18px 44px rgba(255,165,0,0.14);
+}
+
 .faction-info{flex:1}
 .faction-name{font-weight:800;font-size:16px}
 .faction-desc{
@@ -105,7 +132,56 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .unit-meta{display:flex;justify-content:space-between;align-items:center}
 .unit-name{font-weight:700}
 .slot-pill{font-size:12px;padding:4px 6px;border-radius:999px;background:rgba(255,255,255,0.03);color:var(--muted)}
-.unit-card.selected{outline:3px solid rgba(110,231,183,0.12);box-shadow:0 8px 30px rgba(110,231,183,0.06)}
+.unit-card.selected{
+  /* stronger visible border for active (selected) cards */
+  outline: none;
+  border: 2px solid rgba(110,231,183,0.92);
+  box-shadow: 0 18px 44px rgba(110,231,183,0.22);
+  transform: translateY(-6px);
+  transition: box-shadow .12s ease, border-color .12s ease, transform .12s ease;
+}
+
+/* Selected styles for Mercz variants (override their tint when active) */
+.unit-card.selected.mercz{
+  border: 2px solid rgba(255,165,0,0.92);
+  box-shadow: 0 18px 44px rgba(255,165,0,0.22);
+  transform: translateY(-6px);
+}
+.unit-card.selected.mercz-zed-mercz{
+  border: 2px solid rgba(167,139,250,0.92);
+  box-shadow: 0 18px 44px rgba(167,139,250,0.22);
+  transform: translateY(-6px);
+}
+
+/* Always make selected Kyllal unit cards use the Kyllal white border regardless of active faction */
+.unit-card[data-id^="kyllal"].selected{
+  border:2px solid rgba(255,255,255,0.92) !important;
+  box-shadow:0 18px 44px rgba(255,255,255,0.14) !important;
+}
+
+/* Always make selected Savm unit cards use the Savm green border regardless of active faction */
+.unit-card[data-id^="savm"].selected{
+  border:2px solid rgba(110,231,183,0.92) !important;
+  box-shadow:0 18px 44px rgba(110,231,183,0.14) !important;
+}
+
+/* Always make selected Zedz unit cards use the Zedz grey border regardless of active faction */
+.unit-card[data-id^="zedz"].selected{
+  border:2px solid rgba(200,200,200,0.86) !important;
+  box-shadow:0 18px 44px rgba(200,200,200,0.10) !important;
+}
+
+/* Always make selected Skaylz unit cards use the Skaylz red border regardless of active faction */
+.unit-card[data-id^="skaylz"].selected{
+  border:2px solid rgba(255, 0, 0, 0.86) !important;
+  box-shadow:0 18px 44px rgba(255, 0, 0, 0.10) !important;
+}
+
+/* Always make selected Terra unit cards use the Terra blue border regardless of active faction */
+.unit-card[data-id^="terra"].selected{
+  border:2px solid rgba(96,165,250,0.92) !important;
+  box-shadow:0 18px 44px rgba(96,165,250,0.14) !important;
+}
 
 .selected-list{display:flex;flex-direction:column;gap:8px;margin-top:8px;min-height:160px}
 .selected-item{display:flex;gap:8px;align-items:center;padding:8px;border-radius:6px;background:rgba(255,255,255,0.02)}
