@@ -7,6 +7,7 @@
     { id:'terra', name:'Terra', desc:'This is our planet - BUGGER OFF!', cls:'faction-tr', img: 'resources/factions/Terra.png' },
     { id:'skaylz', name:"Skayl'z", desc:'Warlike tribe of many different species of reptile.', cls:'faction-sk', img: "resources/factions/Skayl'z.png" },
     { id:'mercz', name:'Mercz', desc:'Flexible mercenaries. Versatile contracts.', cls:'faction-mc', img: 'resources/factions/Mercz.png' },
+    { id:'attachments', name:'Attachments', desc:'Small support grub attachments (Ammo, Medic, etc.)', cls:'faction-at', img: 'resources/factions/Attachments.png' },
   ];
 
   const SLOTS = ['LEADER','SUPPORT','SCOUT'];
@@ -91,9 +92,19 @@
       {id:'mercz-zobafezz', name:'Zoba Fezz', slot:'NONE', img:'resources/models/Mercz/ZobaFezz.png', type: 'mercz'},
 
       {id:'mercz-jazon', name:"Ja'Zon", slot:'SUPPORT', img:'resources/models/Mercz/Jazon.png', type: 'zed-mercz', bp: 10},
-      {id:'mercz-pinzed', name:'Pin-Zed', slot:'LEADER', img:'resources/models/Mercz/PinZed.png', type: 'zed-mercz', cbp: 12},
+      {id:'mercz-pinzed', name:'Pin-Zed', slot:'LEADER', img:'resources/models/Mercz/PinZed.png', type: 'zed-mercz', cbp: 15},
       {id:'mercz-tex', name:'Tex', slot:'SUPPORT', img:'resources/models/Mercz/Tex.png', type: 'zed-mercz', bp: 10},
       {id:'mercz-zennywise', name:'Zenny-Wise', slot:'SCOUT', img:'resources/models/Mercz/ZennyWise.png', type: 'zed-mercz', bp: 6},
+    ],
+    attachments:[
+      {id:'attachments-ammo', name:'Ammo Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Ammogrub.png'},
+      {id:'attachments-buzz', name:'Buzz Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Buzzgrub.png', requiresFaction: 'zedz'},
+      {id:'attachments-covid', name:'Covid Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Covidgrub.png'},
+      {id:'attachments-marker', name:'Marker Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Markergrub.png'},
+      {id:'attachments-medic', name:'Medic Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Medicgrub.png'},
+      {id:'attachments-minigun', name:'Mini-gun Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Minigungrub.png'},
+      {id:'attachments-rocket', name:'Rocket Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Rocketgrub.png'},
+      {id:'attachments-shield', name:'Shield Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Shieldgrub.png'},
     ],
   };
 
@@ -189,6 +200,16 @@
     m['mercz-pinzed'] = 'Pinzed.pdf';
     m['mercz-tex'] = 'Tex.pdf';
     m['mercz-zennywise'] = 'Zennywize.pdf';
+
+  // Attachments
+  m['attachments-ammo'] = 'Ammogrub.pdf';
+  m['attachments-buzz'] = 'Buzzgrub.pdf';
+  m['attachments-covid'] = 'Covidgrub.pdf';
+  m['attachments-marker'] = 'Markergrub.pdf';
+  m['attachments-medic'] = 'Medicgrub.pdf';
+  m['attachments-minigun'] = 'Minigungrub.pdf';
+  m['attachments-rocket'] = 'Rocketgrub.pdf';
+  m['attachments-shield'] = 'Shieldgrub.pdf';
 
     return m;
   })();
@@ -324,8 +345,9 @@
   function renderFactions(){
     factionTiles.innerHTML = '';
     FACTIONS.forEach(f => {
-      // do not show mercz until another faction has been selected
+      // do not show mercz or attachments until another faction has been selected
       if(f.id === 'mercz' && !state.showMercz) return;
+      if(f.id === 'attachments' && !state.currentFaction) return;
       const el = document.createElement('div');
       el.className = 'faction-tile';
       if(state.activeFactions.includes(f.id)) el.classList.add('active');
@@ -346,16 +368,22 @@
         if(state.currentFaction === f.id){
           // if clicking the active non-mercz faction, deselect it and drop all selected units
           if(f.id !== 'mercz'){
-            // drop all selections
-            // undo disabled
-            state.selected = [];
+            // drop non-attachment selections but preserve any ATTACHMENT selections
+            const beforeCount = state.selected.length;
+            state.selected = state.selected.filter(s => s.slot === 'ATTACHMENT');
             state.currentFaction = null;
             currentFactionLabel.textContent = 'Select a faction';
             // hide mercz until a new faction is chosen
             state.showMercz = false;
-            state.activeFactions = state.activeFactions.filter(a=>a==='mercz');
+            // preserve mercz and attachments active flags when collapsing
+            const keepMercz = state.activeFactions.includes('mercz');
+            const keepAttachments = state.activeFactions.includes('attachments');
+            state.activeFactions = [];
+            if(keepMercz) state.activeFactions.push('mercz');
+            if(keepAttachments) state.activeFactions.push('attachments');
             if(merczModeControls) merczModeControls.hidden = !state.activeFactions.includes('mercz');
             renderFactions(); renderUnits(); renderSelected();
+            if(beforeCount !== state.selected.length) showToast('Selections cleared because faction collapsed (attachments preserved)');
             return;
           }
           // allow expansion toggle for mercz or leave it alone
@@ -363,8 +391,8 @@
           return;
         }
 
-        // If clicking Mercz, toggle Mercz active state without changing the primary faction
-        if(f.id === 'mercz'){
+  // If clicking Mercz, toggle Mercz active state without changing the primary faction
+  if(f.id === 'mercz'){
           const idx = state.activeFactions.indexOf('mercz');
           if(idx === -1){
             state.activeFactions.push('mercz');
@@ -389,18 +417,44 @@
           renderUnits();
           return;
         }
+        // If clicking Attachments, toggle attachments active state without changing the primary faction
+        if(f.id === 'attachments'){
+          const idx = state.activeFactions.indexOf('attachments');
+          if(idx === -1){
+            state.activeFactions.push('attachments');
+            el.classList.add('active');
+            el.classList.add('expanded');
+          } else {
+            state.activeFactions.splice(idx,1);
+            el.classList.remove('active');
+            el.classList.remove('expanded');
+            // when attachments turned off, remove attachment selections
+            state.selected = state.selected.filter(s => !(s.slot === 'ATTACHMENT'));
+            renderSelected();
+          }
+          renderUnits();
+          return;
+        }
 
     // Clicking a non-mercz faction: collapse expansions, show mercz, make this primary
         collapseAllFactionExpansions();
   if(f.id !== 'mercz') state.showMercz = true;
 
-        // Set active factions: primary becomes this faction; keep mercz if it was active
-        const keepMercz = state.activeFactions.includes('mercz');
-        state.activeFactions = [f.id];
-        if(keepMercz) state.activeFactions.push('mercz');
+      // Set active factions: primary becomes this faction; keep mercz and attachments if they were active
+    const keepMercz = state.activeFactions.includes('mercz');
+    const keepAttachments = state.activeFactions.includes('attachments');
+    state.activeFactions = [f.id];
+    if(keepMercz) state.activeFactions.push('mercz');
+    if(keepAttachments) state.activeFactions.push('attachments');
 
     // if switching to a different non-mercz faction, clear all selected unit cards as requested
-  if(state.currentFaction && state.currentFaction !== f.id){ /* undo disabled */ state.selected = []; renderSelected(); showToast('Selections cleared because a different faction was selected'); }
+  if(state.currentFaction && state.currentFaction !== f.id){
+    // preserve attachments when switching primary faction
+    const before = state.selected.length;
+    state.selected = state.selected.filter(s => s.slot === 'ATTACHMENT');
+    renderSelected();
+    if(state.selected.length !== before) showToast('Selections cleared because a different faction was selected (attachments preserved)');
+  }
 
     // select faction (updates currentFaction and units)
   selectFaction(f.id);
@@ -443,16 +497,13 @@
     }
     // Set current faction
     state.currentFaction = fid;
-    // Reflect active faction on the body element so CSS can react (e.g., selected card tint)
-    try{
-      if(state.currentFaction) document.body.setAttribute('data-faction', state.currentFaction);
-      else document.body.removeAttribute('data-faction');
-    }catch(e){}
     currentFactionLabel.textContent = 'Faction: ' + (FACTIONS.find(x=>x.id===fid)?.name||'');
-    // Ensure primary active faction is set (keep mercz active if present)
-    const keepMercz = state.activeFactions.includes('mercz');
-    state.activeFactions = [fid];
-    if(keepMercz) state.activeFactions.push('mercz');
+  // Ensure primary active faction is set (keep mercz and attachments active if present)
+  const keepMercz = state.activeFactions.includes('mercz');
+  const keepAttachments = state.activeFactions.includes('attachments');
+  state.activeFactions = [fid];
+  if(keepMercz) state.activeFactions.push('mercz');
+  if(keepAttachments) state.activeFactions.push('attachments');
     // Re-apply visual active states on existing DOM (renderFactions caller will also re-render)
     Array.from(factionTiles.children).forEach(tile => {
       tile.classList.toggle('active', state.activeFactions.includes(tile.dataset.id));
@@ -466,6 +517,8 @@
     const primaryUnits = primaryId ? (UNITS[primaryId] || []) : [];
     const merczActive = state.activeFactions.includes('mercz');
     const merczUnits = merczActive ? (UNITS['mercz'] || []) : [];
+  const attachmentsActive = state.activeFactions.includes('attachments');
+  const attachmentsUnits = (UNITS['attachments'] || []);
 
     // If merczMode is 'inline', render as before (primary then mercz interleaved by slot)
     if(!merczActive || state.merczMode === 'inline'){
@@ -530,6 +583,31 @@
         slotRow.appendChild(slotCards);
         unitGrid.appendChild(slotRow);
       });
+        // If attachments active, render attachments row
+        if(attachmentsActive){
+          const aRow = document.createElement('div'); aRow.className='slot-row';
+          const aHeader = document.createElement('div'); aHeader.className='slot-header'; aHeader.textContent='ATTACHMENTS'; aRow.appendChild(aHeader);
+          const aCards = document.createElement('div'); aCards.className='slot-cards';
+          const list = attachmentsUnits.filter(u => !(u.requiresFaction && u.requiresFaction !== primaryId));
+          if(list.length===0){ const empty = document.createElement('div'); empty.className='slot-empty'; empty.textContent='No attachments available'; aCards.appendChild(empty); }
+          list.forEach(u=>{
+            const card = document.createElement('div'); card.className='unit-card attachment'; card.dataset.id = u.id;
+            card.innerHTML = `
+              <div class="unit-art">${u.img ? `<img src="${encodeURI(u.img)}" alt="${u.name}"/>` : u.art}</div>
+              <div class="unit-meta">
+                <div class="unit-name">${u.name}</div>
+                <div class="slot-pill">ATTACHMENT</div>
+              </div>
+              <div class="unit-actions"><a class="stats-link" href="${getPdfPath(u)}" target="_blank" rel="noopener">Stats</a></div>
+              <div class="attachment-badge">ATTACHMENT</div>
+            `;
+            if(isSelected(u.id)) card.classList.add('selected');
+            card.addEventListener('click', ()=>toggleSelect(u));
+            aCards.appendChild(card);
+          });
+          aRow.appendChild(aCards);
+          unitGrid.appendChild(aRow);
+        }
     } else if(state.merczMode === 'fourth'){
       // Render standard slots first
       SLOTS.forEach(slot => {
@@ -622,6 +700,31 @@
 
       merczRow.appendChild(mcards);
       unitGrid.appendChild(merczRow);
+      // If attachments active, render attachments row (when mercz is rendered as 4th slot)
+      if(attachmentsActive){
+        const aRow = document.createElement('div'); aRow.className='slot-row';
+        const aHeader = document.createElement('div'); aHeader.className='slot-header'; aHeader.textContent='ATTACHMENTS'; aRow.appendChild(aHeader);
+        const aCards = document.createElement('div'); aCards.className='slot-cards';
+        const list = attachmentsUnits.filter(u => !(u.requiresFaction && u.requiresFaction !== primaryId));
+        if(list.length===0){ const empty = document.createElement('div'); empty.className='slot-empty'; empty.textContent='No attachments available'; aCards.appendChild(empty); }
+        list.forEach(u=>{
+          const card = document.createElement('div'); card.className='unit-card attachment'; card.dataset.id = u.id;
+          card.innerHTML = `
+            <div class="unit-art">${u.img ? `<img src="${encodeURI(u.img)}" alt="${u.name}"/>` : u.art}</div>
+            <div class="unit-meta">
+              <div class="unit-name">${u.name}</div>
+              <div class="slot-pill">ATTACHMENT</div>
+            </div>
+            <div class="unit-actions"><a class="stats-link" href="${getPdfPath(u)}" target="_blank" rel="noopener">Stats</a></div>
+            <div class="attachment-badge">ATTACHMENT</div>
+          `;
+          if(isSelected(u.id)) card.classList.add('selected');
+          card.addEventListener('click', ()=>toggleSelect(u));
+          aCards.appendChild(card);
+        });
+        aRow.appendChild(aCards);
+        unitGrid.appendChild(aRow);
+      }
     }
     updateUI();
   }
@@ -646,6 +749,18 @@
 
   function toggleSelect(unit){
     let already = isSelected(unit.id);
+    // attachments: allow up to 3 independent selections, do not deselect other faction cards
+    if(unit && unit.slot === 'ATTACHMENT'){
+      // allow multiple attachments up to 3
+      if(already){
+        state.selected = state.selected.filter(s=>s.id!==unit.id);
+      } else {
+        const attachmentsSelected = state.selected.filter(s=>s.slot==='ATTACHMENT').length;
+        if(attachmentsSelected >= 3){ flashMessage('Maximum 3 attachments'); return; }
+        state.selected.push(unit);
+      }
+      renderUnits(); renderSelected(); return;
+    }
     // For Zedz scouts we allow selecting multiple of the same unit — treat 'already' as false so
     // clicking the scout will add another instance instead of toggling it off.
     if(state.currentFaction === 'zedz' && unit && unit.slot === 'SCOUT'){
@@ -670,6 +785,8 @@
       }
       state.selected = state.selected.filter(s=>s.id!==unit.id);
     } else {
+      // if adding a non-attachment unit, keep existing attachments selected (do not remove)
+      // default behavior for other units continues below
       // Zedz-specific selection rules
       if(state.currentFaction === 'zedz'){
         // Special-case: when Zedz is primary and MERCZ is enabled as fourth slot,
@@ -728,7 +845,9 @@
         const isMerczUnit = unit.id && unit.id.startsWith && unit.id.startsWith('mercz');
         const maxAllowed = (state.merczMode==='fourth') ? 4 : 3;
         const targetSlot = (isMerczUnit && state.merczMode==='fourth') ? 'MERCZ' : unit.slot;
-        if(state.selected.length>=maxAllowed){
+        // compute non-attachment selected count for capacity checks
+        const nonAttachmentSelectedNow = state.selected.filter(s => s.slot !== 'ATTACHMENT');
+        if(nonAttachmentSelectedNow.length>=maxAllowed){
           const sameSlot = findSelectedBySlot(targetSlot);
           if(sameSlot){ state.selected = state.selected.map(s=> s.slot===targetSlot ? (isMerczUnit && state.merczMode==='fourth' ? Object.assign({}, unit, {slot:'MERCZ'}) : unit) : s); }
           else { flashMessage(`Maximum ${maxAllowed} units. Remove one to add another.`); return; }
@@ -771,6 +890,10 @@
     // Render a header and body for each slot in fixed order. Only include MERCZ when mercz is in fourth mode and active.
     const displayOrder = ['LEADER','SUPPORT','SCOUT'];
     if(state.merczMode === 'fourth' && state.activeFactions.includes('mercz')) displayOrder.push('MERCZ');
+  // Include attachments section in the selected list when the Attachments faction is active
+  // Use the same slot token 'ATTACHMENT' as used in state.selected entries so filtering
+  // in the extra/unexpected section won't duplicate attachments.
+  if(state.activeFactions.includes('attachments')) displayOrder.push('ATTACHMENT');
 
     displayOrder.forEach(slot => {
       const slotWrap = document.createElement('div');
@@ -784,8 +907,8 @@
       const body = document.createElement('div');
       body.className = 'selected-slot-body';
 
-      // find selected units for this slot. For SCOUT we may have multiple; other slots only one expected
-      if(slot === 'SCOUT'){
+  // find selected units for this slot. For SCOUT and ATTACHMENT we may have multiple; other slots only one expected
+  if(slot === 'SCOUT'){
         const scouts = state.selected.filter(s => s.slot === 'SCOUT');
         if(scouts.length>0){
           scouts.forEach(u => {
@@ -864,6 +987,42 @@
         }
       }
 
+      // Handle attachments section (multiple possible). The displayOrder token for attachments is 'ATTACHMENT'
+      if(slot === 'ATTACHMENT'){
+        // set header label to plural 'ATTACHMENTS' for readability
+        if(header && header.textContent) header.textContent = 'ATTACHMENTS';
+        // clear the body we just appended and render attachments instead
+        body.innerHTML = '';
+        const atts = state.selected.filter(s => s.slot === 'ATTACHMENT');
+        if(atts.length>0){
+          atts.forEach(u => {
+            const it = document.createElement('div');
+            it.className = 'selected-item';
+            it.innerHTML = `
+              <div class="sel-art">${u.img ? `<img src="${encodeURI(u.img)}" alt="${u.name}"/>` : u.art}</div>
+              <div class="sel-meta">
+                <div style="font-weight:700">${u.name}</div>
+                <div class="small-muted">ATTACHMENT</div>
+              </div>
+              <div class="sel-actions">
+                <a class="stats-link" href="${getPdfPath(u)}" target="_blank" rel="noopener">Stats</a>
+                <button data-id="${u.id}" class="remove-btn" title="Remove">✕</button>
+              </div>
+            `;
+            it.querySelector('.remove-btn').addEventListener('click', ()=>{
+              state.selected = state.selected.filter(s=>s.id!==u.id);
+              renderUnits(); renderSelected();
+            });
+            body.appendChild(it);
+          });
+        } else {
+          const empty = document.createElement('div');
+          empty.className = 'selected-empty';
+          empty.textContent = '(empty)';
+          body.appendChild(empty);
+        }
+      }
+
       slotWrap.appendChild(body);
       selectedList.appendChild(slotWrap);
     });
@@ -895,12 +1054,15 @@
 
     // Update header: show Current Control BP for Zedz in the header instead of the 'Selected Team' label
     const h = document.querySelector('.panel-right h3');
+    // Do not count attachments towards the Selected Team count
+    const nonAttachmentSelected = state.selected.filter(s => s.slot !== 'ATTACHMENT');
+    const nonAttachmentCount = nonAttachmentSelected.length;
     const maxAllowed = ((state.merczMode==='fourth' && state.activeFactions.includes('mercz')) ? 4 : 3);
     if(h){
       if(state.currentFaction === 'zedz'){
         h.textContent = `Control BP Remaining: ${state.currentControlBP === null ? '-' : state.currentControlBP}`;
       } else {
-        h.textContent = `Selected Team (${state.selected.length}/${maxAllowed})`;
+        h.textContent = `Selected Team (${nonAttachmentCount}/${maxAllowed})`;
       }
     }
 
@@ -908,9 +1070,9 @@
     // - inline: exactly 3 and one of each slot
     // - fourth: exactly 4 with LEADER, SUPPORT, SCOUT, and one MERCZ
     if(state.merczMode==='fourth' && state.activeFactions.includes('mercz')){
-      confirmBtn.disabled = !(state.selected.length===4 && ['LEADER','SUPPORT','SCOUT','MERCZ'].every(slot=> state.selected.some(s=>s.slot===slot)));
+      confirmBtn.disabled = !(nonAttachmentCount===4 && ['LEADER','SUPPORT','SCOUT','MERCZ'].every(slot=> nonAttachmentSelected.some(s=>s.slot===slot)));
     } else {
-      confirmBtn.disabled = !(state.selected.length===3 && SLOTS.every(slot=> state.selected.some(s=>s.slot===slot)));
+      confirmBtn.disabled = !(nonAttachmentCount===3 && SLOTS.every(slot=> nonAttachmentSelected.some(s=>s.slot===slot)));
     }
 
     // Zedz special-case: if Current Control BP is exactly 0, allow confirming the team
@@ -1038,12 +1200,13 @@
         };
       }
 
-      // Collect selected units in slot-priority order: LEADER, SUPPORT, SCOUT, MERCZ
-      const leaders = state.selected.filter(s => s.slot === 'LEADER');
-      const supports = state.selected.filter(s => s.slot === 'SUPPORT');
-      const scouts = state.selected.filter(s => s.slot === 'SCOUT');
-      const mercs = state.selected.filter(s => s.slot === 'MERCZ');
-      const ordered = [].concat(leaders, supports, scouts, mercs);
+  // Collect selected units in slot-priority order: LEADER, SUPPORT, SCOUT, MERCZ, ATTACHMENTS
+  const leaders = state.selected.filter(s => s.slot === 'LEADER');
+  const supports = state.selected.filter(s => s.slot === 'SUPPORT');
+  const scouts = state.selected.filter(s => s.slot === 'SCOUT');
+  const mercs = state.selected.filter(s => s.slot === 'MERCZ');
+  const attachments = state.selected.filter(s => s.slot === 'ATTACHMENT');
+  const ordered = [].concat(leaders, supports, scouts, mercs, attachments);
       if(ordered.length === 0) throw new Error('No selected units to combine');
 
       // Render every selected unit's PDF first page to an image (with metadata)
