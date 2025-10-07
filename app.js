@@ -1131,6 +1131,8 @@
   confirmBtn.addEventListener('click', async ()=>{
     if(confirmBtn.disabled) return;
     try{
+      // prevent duplicate clicks while building
+      if(confirmBtn) confirmBtn.disabled = true;
       // Helper to dynamically load a script
       function loadScript(src){
         return new Promise((resolve, reject)=>{
@@ -1211,8 +1213,65 @@
 
       // Render every selected unit's PDF first page to an image (with metadata)
       const images = [];
-      for(const u of ordered){
-        images.push(await renderPdfToPng(getPdfPath(u)));
+
+      // Create a simple progress overlay so the user sees work is happening
+      function createProgressOverlay(){
+        // do not recreate if already present
+        if(document.getElementById('pdfProgress')) return;
+        const overlay = document.createElement('div');
+        overlay.id = 'pdfProgress';
+        overlay.setAttribute('role','status');
+
+        const box = document.createElement('div');
+        box.className = 'pdf-progress-box';
+
+        const title = document.createElement('div');
+        title.className = 'pdf-progress-title';
+        title.textContent = 'Building combined PDF...';
+        box.appendChild(title);
+
+        const progressWrap = document.createElement('div');
+        progressWrap.className = 'pdf-progress-bar';
+
+        const progressFill = document.createElement('div');
+        progressFill.id = 'pdfProgressFill';
+        progressFill.className = 'pdf-progress-fill';
+        progressWrap.appendChild(progressFill);
+        box.appendChild(progressWrap);
+
+        const pct = document.createElement('div');
+        pct.id = 'pdfProgressPct';
+        pct.className = 'pdf-progress-pct';
+        pct.textContent = '0%';
+        box.appendChild(pct);
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+      }
+
+      function updateProgress(p){
+        const fill = document.getElementById('pdfProgressFill');
+        const pct = document.getElementById('pdfProgressPct');
+        if(fill) fill.style.width = Math.max(0, Math.min(100, Math.round(p))) + '%';
+        if(pct) pct.textContent = Math.max(0, Math.min(100, Math.round(p))) + '%';
+      }
+
+      function removeProgressOverlay(){
+        const el = document.getElementById('pdfProgress');
+        if(el) el.remove();
+      }
+
+      // show overlay before starting the potentially long render loop
+      createProgressOverlay();
+
+      for(const [i, u] of ordered.entries()){
+        try{
+          images.push(await renderPdfToPng(getPdfPath(u)));
+        } finally {
+          // update progress based on how many images we've processed
+          const pct = ((i + 1) / ordered.length) * 100;
+          updateProgress(pct);
+        }
       }
 
       // Create jsPDF document (landscape 11" x 8.5") using inches as units
@@ -1278,9 +1337,15 @@
       // Output the combined PDF as a blob and open in new tab for printing/saving
       const blob = doc.output('blob');
       const url = URL.createObjectURL(blob);
-      window.open(url, '_blank');
+  window.open(url, '_blank');
+  // remove progress UI now that the PDF has been generated and opened
+  try{ removeProgressOverlay(); } catch(e){ /* ignore */ }
+  if(confirmBtn) confirmBtn.disabled = false;
 
     } catch(err){
+  // Ensure overlay is removed if an error occurs
+  try{ removeProgressOverlay(); } catch(e){ /* ignore */ }
+  if(confirmBtn) confirmBtn.disabled = false;
       console.error('Error building combined PDF', err);
       alert('Error building combined PDF: ' + (err && err.message));
     }
