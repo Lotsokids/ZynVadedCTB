@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Zynvaded Model Checklist</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <h1>Zynvaded — Model Checklist</h1>
+      <div class="header-sub">Track which models you have painted or assembled</div>
+      <div class="header-sub">
+        <a href="builder.html" class="nav-link">Combat Team Builder</a> | 
+        <a href="index.html" class="nav-link">Home</a>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="checklist-controls">
+        <div class="controls">
+          <div class="progress-info">
+            <span id="progressText">0 of 0 models completed</span>
+          </div>
+          <div class="actions">
+            <button id="clearAllBtn">Clear All</button>
+            <button id="checkAllBtn">Check All</button>
+            <button id="printChecklistBtn">Print Checklist</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="checklistGrid" class="checklist-grid">
+        <!-- Faction sections will be populated here -->
+      </section>
+    </main>
+
+    <script src="checklist.js"></script>
+  </body>
+</html>

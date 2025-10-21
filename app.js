@@ -1209,7 +1209,17 @@
   const mercs = state.selected.filter(s => s.slot === 'MERCZ');
   const attachments = state.selected.filter(s => s.slot === 'ATTACHMENT');
   const ordered = [].concat(leaders, supports, scouts, mercs, attachments);
-      if(ordered.length === 0) throw new Error('No selected units to combine');
+  // Deduplicate selections by unit id so the combined PDF contains at most one page per unit
+  const orderedUnique = [];
+  const seenIds = new Set();
+  for(const u of ordered){
+    if(!u || !u.id) continue;
+    if(!seenIds.has(u.id)){
+      orderedUnique.push(u);
+      seenIds.add(u.id);
+    }
+  }
+  if(orderedUnique.length === 0) throw new Error('No selected units to combine');
 
       // Render every selected unit's PDF first page to an image (with metadata)
       const images = [];
@@ -1264,12 +1274,12 @@
       // show overlay before starting the potentially long render loop
       createProgressOverlay();
 
-      for(const [i, u] of ordered.entries()){
+      for(const [i, u] of orderedUnique.entries()){
         try{
           images.push(await renderPdfToPng(getPdfPath(u)));
         } finally {
           // update progress based on how many images we've processed
-          const pct = ((i + 1) / ordered.length) * 100;
+          const pct = ((i + 1) / orderedUnique.length) * 100;
           updateProgress(pct);
         }
       }
