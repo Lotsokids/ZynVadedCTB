@@ -105,6 +105,7 @@
       {id:'attachments-minigun', name:'Mini-gun Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Minigungrub.png'},
       {id:'attachments-rocket', name:'Rocket Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Rocketgrub.png'},
       {id:'attachments-shield', name:'Shield Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Shieldgrub.png'},
+      {id:'attachments-lbwtank', name:'LBW Tank Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/LBWtank.png'},
     ],
   };
 
@@ -210,6 +211,7 @@
   m['attachments-minigun'] = 'Minigungrub.pdf';
   m['attachments-rocket'] = 'Rocketgrub.pdf';
   m['attachments-shield'] = 'Shieldgrub.pdf';
+  m['attachments-lbwtank'] = 'LBWtankgrub.pdf';
 
     return m;
   })();

@@ -1,4 +1,4 @@
-// Zynvaded Model Checklist - app logic
+// Zynvaded Stat Sheets - app logic
 (function(){
   const FACTIONS = [
     { id:'zyn', name:'Zyn', desc:'United Zyn Forces', cls:'faction-zn', img: 'resources/factions/Zyn.png' },
@@ -15,7 +15,7 @@
     { id:'escapefromhouscatraz', name:'Escape From Houscatraz', desc:'Prison break adventure game', cls:'faction-tr', img: 'resources/factions/EscapeFromHouscatraz.png' },
   ];
 
-  // Copy of UNITS data from app.js
+  // Copy of UNITS data from checklist.js (importing the same structure)
   const UNITS = {
     zyn:[
       {id:'zyn-l1', name:'Captain (M)', slot:'LEADER', art:'', img:'resources/models/Zyn/Captain.png'},
@@ -44,10 +44,10 @@
       {id:'zyn-c5', name:"Nik'To", slot:'SCOUT', art:'', img:'resources/models/Zyn/Nikto.png'},
     ],
     kyllal:[
-    //  {id:'kyllal-c4', name:'W.A.S.P.', slot:'SCOUT', art:'', img:'resources/models/Kyllal/WASP.png'},
+      // Empty for now, inherit from Zyn
     ],
     savm:[
-    //  {id:'savm-c4', name:'W.A.S.P.', slot:'SCOUT', art:'', img:'resources/models/Savm/WASP.png'},
+      // Empty for now, inherit from Zyn
     ],
     terra:[
       {id:'terra-l1', name:'Fyre Fly', slot:'LEADER', art:'', img:'resources/models/Terra/Fyre Fly.png'},
@@ -99,31 +99,28 @@
       {id:'mercz-jazon', name:"Ja'Zon", slot:'SUPPORT', img:'resources/models/Mercz/Jazon.png', type: 'zed-mercz', bp: 10},
       {id:'mercz-pinzed', name:'Pin-Zed', slot:'LEADER', img:'resources/models/Mercz/PinZed.png', type: 'zed-mercz', cbp: 15},
       {id:'mercz-tex', name:'Tex', slot:'SUPPORT', img:'resources/models/Mercz/Tex.png', type: 'zed-mercz', bp: 10},
-      {id:'mercz-zennywise', name:'Zenny-Wise', slot:'SCOUT', img:'resources/models/Mercz/ZennyWise.png', type: 'zed-mercz', bp: 6},
+      {id:'mercz-zennywise', name:"Zenny'Wise", slot:'LEADER', img:'resources/models/Mercz/ZennyWise.png', type: 'zed-mercz', cbp: 13},
     ],
     attachments:[
-      {id:'attachments-ammo', name:'Ammo Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Ammogrub.png'},
-      {id:'attachments-buzz', name:'Buzz Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Buzzgrub.png', requiresFaction: 'zedz'},
-      {id:'attachments-covid', name:'Covid Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Covidgrub.png'},
-      {id:'attachments-marker', name:'Marker Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Markergrub.png'},
-      {id:'attachments-medic', name:'Medic Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Medicgrub.png'},
-      {id:'attachments-minigun', name:'Mini-gun Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Minigungrub.png'},
-      {id:'attachments-rocket', name:'Rocket Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Rocketgrub.png'},
-      {id:'attachments-shield', name:'Shield Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Shieldgrub.png'},
-      {id:'attachments-lbwtank', name:'LBW Tank Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/LBWtank.png'},
+      {id:'attachments-ammo', name:'Ammo Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/AmmoGrub.png'},
+      {id:'attachments-buzz', name:'Buzz Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/BuzzGrub.png'},
+      {id:'attachments-covid', name:'Covid Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/CovidGrub.png'},
+      {id:'attachments-marker', name:'Marker Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/MarkerGrub.png'},
+      {id:'attachments-medic', name:'Medic Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/MedicGrub.png'},
+      {id:'attachments-minigun', name:'Minigun Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/MinigunGrub.png'},
+      {id:'attachments-rocket', name:'Rocket Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/RocketGrub.png'},
+      {id:'attachments-shield', name:'Shield Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/ShieldGrub.png'},
+      {id:'attachments-lbwtank', name:'LBW Tank Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/LBWTankGrub.png'},
     ],
     other:[
-      {id:'other-grubz', name:'Grub Objectives', slot:'OTHER', img:'resources/models/Other/Grubz.png'},
-      {id:'other-dice', name:'Faction Dice Set', slot:'OTHER', img:'resources/models/Other/Dice.png'},
       {id:'other-tokens', name:'Cry Baby', slot:'OTHER', img:'resources/models/Other/CryBaby.png'},
       {id:'other-markers', name:'Supply Tokens', slot:'OTHER', img:'resources/models/Other/SupplyTokens.png'},
-      {id:'other-rulebook', name:'Hardback Rulebook', slot:'OTHER', img:'resources/models/Other/RulebookCover.png'},
       {id:'other-santagrub', name:'Santa Grub', slot:'OTHER', img:'resources/models/Other/SantaGrub.png'},
     ],
     tournamentmodels:[
-      {id:'tournament-rocket', name:'Rocket Trooper Friendliest', slot:'TOURNAMENT', img:'resources/models/TournamentModels/RocketTrooperFriendliest.png'},
-      {id:'tournament-sniper1', name:'Sniper Painted', slot:'TOURNAMENT', img:'resources/models/TournamentModels/SniperPainted.png'},
-      {id:'tournament-sniper2', name:'Sniper Tournament Winner', slot:'TOURNAMENT', img:'resources/models/TournamentModels/SniperTournament.png'},
+      //{id:'tournamentmodels-ftv', name:'From The Vault', slot:'SPECIAL', art:'', img:'resources/models/TournamentModels/FromTheVault.png'},
+      //{id:'tournamentmodels-streamers', name:'Streamers Prize', slot:'SPECIAL', art:'', img:'resources/models/TournamentModels/StreamersPrize.png'},
+      //{id:'tournamentmodels-winners', name:'Winners Trophy', slot:'SPECIAL', art:'', img:'resources/models/TournamentModels/WinnersTrophy.png'},
     ],
     zedbydaylight:[
       {id:'zbd-player1', name:'Shotgunner Gun Front', slot:'PLAYER', img:'resources/models/ZedByDaylight/ZBDShotgunnerGunFront.png'},
@@ -133,91 +130,204 @@
       {id:'zbd-player5', name:'Shotgunner Sword Front', slot:'PLAYER', img:'resources/models/ZedByDaylight/ZBDShotgunnerSwordFront.png'},
       {id:'zbd-killer1', name:'The Killa', slot:'KILLER', img:'resources/models/ZedByDaylight/ZBDTheKilla.png'},
       {id:'zbd-killer2', name:'The Killa Alternate Version', slot:'KILLER', img:'resources/models/ZedByDaylight/ZBDTheKillaAlternate.png'},
-      {id:'zbd-terrain1', name:'4 Generators & 4 Components', slot:'TERRAIN', img:'resources/models/ZedByDaylight/ZBDComponentsAndGenerator.png'},
     ],
     escapefromhouscatraz:[
       {id:'efh-boss', name:'Grubzilla', slot:'BOSS', img:'resources/models/EscapeFromHouscatraz/Grubzilla.png'},
-      {id:'efh-terrain1', name:'Objectives', slot:'OBJECTIVE', img:'resources/models/EscapeFromHouscatraz/Objectives.png'},
     ],
+
   };
 
-  // Faction order as requested
+  // Copy PDF_MAP structure from app.js
+  const PDF_MAP = (function(){
+    const m = {};
+    // default mapping: encoded display name
+    for(const k in UNITS){
+      UNITS[k].forEach(u => { m[u.id] = encodeURIComponent(u.name) + '.pdf'; });
+    }
+
+    // Explicit overrides matching files in resources/pdf
+    // Zyn (for both kyllal and savm)
+    m['zyn-l1'] = 'Captain.pdf';
+    m['zyn-l4'] = 'Captain.pdf';
+    m['zyn-l2'] = 'Sergeant.pdf';
+    m['zyn-l5'] = 'Sergeant.pdf';
+    m['zyn-l3'] = 'Klatu.pdf';
+    m['zyn-l6'] = 'shotgunner.pdf';
+    m['zyn-l7'] = 'shotgunner.pdf';
+    m['zyn-l8'] = 'shotgunner.pdf';
+    m['zyn-l9'] = 'shotgunner.pdf';
+    m['zyn-l10'] = 'shotgunner.pdf';
+    m['zyn-s1'] = 'Brawlr.pdf';
+    m['zyn-s2'] = 'Heavy Gunner.pdf';
+    m['zyn-s6'] = 'Heavy Gunner.pdf';
+    m['zyn-s3'] = 'Medic.pdf';
+    m['zyn-s4'] = 'Rocket Trooper.pdf';
+    m['zyn-s5'] = 'Verata.pdf';
+    m['zyn-c1'] = 'Recon.pdf';
+    m['zyn-c8'] = 'Recon.pdf';
+    m['zyn-c6'] = 'Recon.pdf';
+    m['zyn-c2'] = 'Sniper.pdf';
+    m['zyn-c7'] = 'Sniper.pdf';
+    m['zyn-c3'] = 'Swordzmaster.pdf';
+    m['zyn-c4'] = 'WASP.pdf';
+    m['zyn-c5'] = 'Nikto.pdf';
+
+    // Terra
+    m['terra-l1'] = 'Fyrefly.pdf';
+    m['terra-l2'] = 'Sorceress.pdf';
+    m['terra-l3'] = 'Lightninbugg.pdf';
+    m['terra-s1'] = 'Gunsmith.pdf';
+    m['terra-s2'] = 'Hooligan.pdf';
+    m['terra-s3'] = 'Tankrantula.pdf';
+    m['terra-c1'] = 'Assassin.pdf';
+    m['terra-c2'] = 'Huntsmen.pdf';
+    m['terra-c4'] = 'Huntsmen.pdf';
+    m['terra-c3'] = 'Wingnut.pdf';
+
+    // Skaylz
+    m['skaylz-l1'] = 'Strykr.pdf';
+    m['skaylz-s1'] = 'Frug.pdf';
+    m['skaylz-c1'] = 'Snayk.pdf';
+
+    // Zedz
+    m['zedz-l1'] = 'Nercomancer.pdf';
+    m['zedz-s1'] = 'Brserkr.pdf';
+    m['zedz-s2'] = 'Grubadier.pdf';
+    m['zedz-c1'] = 'Zed Bugz.pdf';
+    m['zedz-c2'] = 'Zed Grubz.pdf';
+    m['zedz-c3'] = 'BurstGrubz.pdf';
+    m['zedz-c4'] = 'Grub Chukz.pdf';
+    m['zedz-c5'] = 'GrubHemoth.pdf';
+
+    // Mercz (standard)
+    m['mercz-alyse'] = 'Alyse.pdf';
+    m['mercz-amus'] = 'Amusthehunter.pdf';
+    m['mercz-amus2'] = 'Amusthehunter.pdf';
+    m['mercz-amus3'] = 'Amusthehunter.pdf';
+    m['mercz-balodek'] = 'Balodek.pdf';
+    m['mercz-capzmerica'] = 'Capzmerica.pdf';
+    m['mercz-capzmerica2'] = 'Capzmerica.pdf';
+    m['mercz-dash'] = 'Dash.pdf';
+    m['mercz-deviant'] = 'Deviant.pdf';
+    m['mercz-dezell'] = 'Dezell.pdf';
+    m['mercz-hobehorze'] = 'Hobehorze.pdf';
+    m['mercz-komobai'] = 'Komabai.pdf';
+    m['mercz-kopekat'] = 'Kopekat.pdf';
+    m['mercz-logaan'] = 'Logaan.pdf';
+    m['mercz-z800'] = 'Z800.pdf';
+    m['mercz-zautja'] = 'Zautja.pdf';
+    m['mercz-zautja2'] = 'Zautja.pdf';
+    m['mercz-zedpul'] = 'Zedpul.pdf';
+    m['mercz-zobafezz'] = 'Zobafezz.pdf';
+
+    // Mercz (zed-flavored)
+    m['mercz-jazon'] = 'Jazon.pdf';
+    m['mercz-pinzed'] = 'Pinzed.pdf';
+    m['mercz-tex'] = 'Tex.pdf';
+    m['mercz-zennywise'] = 'Zennywize.pdf';
+
+    // Attachments
+    m['attachments-ammo'] = 'Ammogrub.pdf';
+    m['attachments-buzz'] = 'Buzzgrub.pdf';
+    m['attachments-covid'] = 'Covidgrub.pdf';
+    m['attachments-marker'] = 'Markergrub.pdf';
+    m['attachments-medic'] = 'Medicgrub.pdf';
+    m['attachments-minigun'] = 'Minigungrub.pdf';
+    m['attachments-rocket'] = 'Rocketgrub.pdf';
+    m['attachments-shield'] = 'Shieldgrub.pdf';
+    m['attachments-lbwtank'] = 'LBWtankgrub.pdf';
+
+    // Other
+    m['other-tokens'] = 'Crybaby.pdf';
+    m['other-markers'] = 'SupplyTokens.pdf';
+    m['other-santagrub'] = 'SantaGrub.pdf';
+
+    // Zed By Daylight
+    m['zbd-player1'] = 'Shotgunner.pdf';
+    m['zbd-player2'] = 'Shotgunner.pdf';
+    m['zbd-player3'] = 'Shotgunner.pdf';
+    m['zbd-player4'] = 'Shotgunner.pdf';
+    m['zbd-player5'] = 'Shotgunner.pdf';
+    m['zbd-killer1'] = 'Killa.pdf';
+    m['zbd-killer2'] = 'Killa.pdf';
+    return m;
+  })();
+
+  // Get PDF path for a unit
+  function getPdfPath(unit){
+    if(!unit) return '';
+    const fname = PDF_MAP[unit.id] || (encodeURIComponent(unit.name) + '.pdf');
+    const base = `resources/pdf/${fname}`;
+    return base + '?_cb=' + Date.now();
+  }
+
+  // Faction display order
   const FACTION_ORDER = ['zyn', 'kyllal', 'savm', 'terra', 'skaylz', 'zedz', 'mercz', 'attachments', 'other', 'tournamentmodels', 'zedbydaylight', 'escapefromhouscatraz'];
 
-  // State for checklist
-  let checkedModels = new Set();
+  // State management
+  let selectedStatsheets = new Set(); // Set of unit IDs
 
-  // DOM refs
-  const checklistGrid = document.getElementById('checklistGrid');
+  // DOM elements
+  const statsheetGrid = document.getElementById('statsheetGrid');
   const progressText = document.getElementById('progressText');
   const clearAllBtn = document.getElementById('clearAllBtn');
   const checkAllBtn = document.getElementById('checkAllBtn');
-  const printChecklistBtn = document.getElementById('printChecklistBtn');
-
-  // Load saved state from localStorage
-  function loadState() {
-    try {
-      const saved = localStorage.getItem('zynvaded-checklist');
-      if (saved) {
-        checkedModels = new Set(JSON.parse(saved));
-      }
-    } catch (e) {
-      console.warn('Could not load checklist state:', e);
-    }
-  }
+  const printStatsBtn = document.getElementById('printStatsBtn');
 
   // Save state to localStorage
   function saveState() {
     try {
-      localStorage.setItem('zynvaded-checklist', JSON.stringify([...checkedModels]));
+      localStorage.setItem('zynvaded-statsheets', JSON.stringify(Array.from(selectedStatsheets)));
     } catch (e) {
-      console.warn('Could not save checklist state:', e);
+      console.warn('Could not save statsheets to localStorage:', e);
     }
   }
 
-  // Toggle model checked state
-  function toggleModel(modelId) {
-    if (checkedModels.has(modelId)) {
-      checkedModels.delete(modelId);
+  // Load saved state from localStorage
+  function loadState() {
+    try {
+      const saved = localStorage.getItem('zynvaded-statsheets');
+      if (saved) {
+        selectedStatsheets = new Set(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.warn('Could not load statsheets from localStorage:', e);
+      selectedStatsheets = new Set();
+    }
+  }
+
+  // Toggle a unit's statsheet selection
+  function toggleStatsheet(unitId) {
+    if (selectedStatsheets.has(unitId)) {
+      selectedStatsheets.delete(unitId);
     } else {
-      checkedModels.add(modelId);
+      selectedStatsheets.add(unitId);
     }
     saveState();
+    renderStatsheetGrid();
     updateProgress();
-    updateModelCard(modelId);
   }
 
-  // Update a single model card's visual state
-  function updateModelCard(modelId) {
-    const card = document.querySelector(`[data-model-id="${modelId}"]`);
-    if (card) {
-      card.classList.toggle('checked', checkedModels.has(modelId));
+  // Get all units across all factions
+  function getAllUnits() {
+    const allUnits = [];
+    for (const factionId of FACTION_ORDER) {
+      const units = UNITS[factionId] || [];
+      allUnits.push(...units);
     }
+    return allUnits;
   }
 
   // Update progress display
   function updateProgress() {
-    const totalModels = getAllModels().length;
-    const checkedCount = checkedModels.size;
-    progressText.textContent = `${checkedCount} of ${totalModels} models completed`;
+    const totalUnits = getAllUnits().length;
+    const selectedCount = selectedStatsheets.size;
+    progressText.textContent = `${selectedCount} of ${totalUnits} stat sheets selected`;
   }
 
-  // Get all models in a flat array
-  function getAllModels() {
-    const allModels = [];
-    FACTION_ORDER.forEach(factionId => {
-      if (UNITS[factionId]) {
-        UNITS[factionId].forEach(unit => {
-          allModels.push({ ...unit, factionId });
-        });
-      }
-    });
-    return allModels;
-  }
-
-  // Render the checklist
-  function renderChecklist() {
-    checklistGrid.innerHTML = '';
+  // Render the statsheet grid
+  function renderStatsheetGrid() {
+    statsheetGrid.innerHTML = '';
 
     FACTION_ORDER.forEach(factionId => {
       const faction = FACTIONS.find(f => f.id === factionId);
@@ -234,10 +344,10 @@
       factionHeader.className = 'faction-header';
       factionHeader.innerHTML = `
         <div class="faction-icon ${faction.cls}">
-          ${faction.img ? `<img src="${encodeURI(faction.img)}" alt="${faction.name}"/>` : faction.name.slice(0,2).toUpperCase()}
+          <img src="${encodeURI(faction.img)}" alt="${faction.name}"/>
         </div>
         <div class="faction-info">
-          <div class="faction-name">${faction.name}</div>
+          <h3 class="faction-name">${faction.name}</h3>
           <div class="faction-desc">${faction.desc}</div>
         </div>
       `;
@@ -267,12 +377,12 @@
         slotUnitsGrid.className = 'units-grid';
 
         unitsBySlot[slot].forEach(unit => {
-          const modelCard = document.createElement('div');
-          modelCard.className = 'model-card';
-          modelCard.dataset.modelId = unit.id;
+          const unitCard = document.createElement('div');
+          unitCard.className = 'model-card';
+          unitCard.dataset.unitId = unit.id;
           
-          if (checkedModels.has(unit.id)) {
-            modelCard.classList.add('checked');
+          if (selectedStatsheets.has(unit.id)) {
+            unitCard.classList.add('checked');
           }
 
           // For mercz units, include type in display
@@ -281,9 +391,9 @@
             slotDisplay += ` (${unit.type === 'zed-mercz' ? 'ZED-MERCZ' : 'MERCZ'})`;
           }
 
-          modelCard.innerHTML = `
+          unitCard.innerHTML = `
             <div class="model-checkbox">
-              <input type="checkbox" id="check-${unit.id}" ${checkedModels.has(unit.id) ? 'checked' : ''}>
+              <input type="checkbox" id="check-${unit.id}" ${selectedStatsheets.has(unit.id) ? 'checked' : ''}>
               <label for="check-${unit.id}" class="checkbox-label"></label>
             </div>
             <div class="model-art">
@@ -296,48 +406,49 @@
           `;
 
           // Add click handler
-          modelCard.addEventListener('click', (e) => {
+          unitCard.addEventListener('click', (e) => {
             // Don't trigger if clicking the checkbox itself
             if (e.target.type !== 'checkbox') {
-              toggleModel(unit.id);
-              const checkbox = modelCard.querySelector('input[type="checkbox"]');
+              toggleStatsheet(unit.id);
+              const checkbox = unitCard.querySelector('input[type="checkbox"]');
               if (checkbox) {
-                checkbox.checked = checkedModels.has(unit.id);
+                checkbox.checked = selectedStatsheets.has(unit.id);
               }
             }
           });
 
           // Add checkbox change handler
-          const checkbox = modelCard.querySelector('input[type="checkbox"]');
+          const checkbox = unitCard.querySelector('input[type="checkbox"]');
           checkbox.addEventListener('change', () => {
-            toggleModel(unit.id);
+            toggleStatsheet(unit.id);
           });
 
-          slotUnitsGrid.appendChild(modelCard);
+          slotUnitsGrid.appendChild(unitCard);
         });
 
         factionSection.appendChild(slotUnitsGrid);
       });
-      checklistGrid.appendChild(factionSection);
+
+      statsheetGrid.appendChild(factionSection);
     });
 
     updateProgress();
   }
 
-  // Clear all checkboxes
+  // Clear all selections
   function clearAll() {
-    checkedModels.clear();
+    selectedStatsheets.clear();
     saveState();
-    renderChecklist();
+    renderStatsheetGrid();
   }
 
-  // Check all checkboxes
+  // Select all statsheets
   function checkAll() {
-    getAllModels().forEach(model => {
-      checkedModels.add(model.id);
+    getAllUnits().forEach(unit => {
+      selectedStatsheets.add(unit.id);
     });
     saveState();
-    renderChecklist();
+    renderStatsheetGrid();
   }
 
   // Load external script
@@ -348,37 +459,52 @@
     });
   }
 
-  // Convert image to base64 for PDF
-  function imageToBase64(imgSrc) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = this.width;
-        canvas.height = this.height;
-        ctx.drawImage(this, 0, 0);
-        try {
-          const dataURL = canvas.toDataURL('image/png');
-          resolve(dataURL);
-        } catch (e) {
-          reject(e);
-        }
-      };
-      img.onerror = reject;
-      img.src = imgSrc;
-    });
+  // Render PDF to PNG function (copied from app.js)
+  async function renderPdfToPng(url){
+    const DPI = 200;
+    const POINTS_PER_INCH = 72;
+    const pixelScale = DPI / POINTS_PER_INCH;
+
+    const fetchUrl = url.replace(/\?.*$/, '') + '?_nocache=' + Date.now();
+    const arrayBuffer = await fetch(fetchUrl).then(r=>r.arrayBuffer());
+    const pdf = await window.pdfjsLib.getDocument({data:arrayBuffer}).promise;
+    const page = await pdf.getPage(1);
+    const viewport = page.getViewport({scale:1});
+
+    const widthInches = viewport.width / POINTS_PER_INCH;
+    const heightInches = viewport.height / POINTS_PER_INCH;
+    const pageWidthPts = widthInches * POINTS_PER_INCH;
+    const pageHeightPts = heightInches * POINTS_PER_INCH;
+
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = Math.round(pageWidthPts * pixelScale);
+    canvas.height = Math.round(pageHeightPts * pixelScale);
+
+    const renderContext = {
+      canvasContext: context,
+      viewport: page.getViewport({scale: pixelScale})
+    };
+
+    await page.render(renderContext).promise;
+
+    try{ console.debug('renderPdfToPng fetched', fetchUrl, '=>', {widthInches, heightInches, pageWidthPts, pageHeightPts, pixelWidth: canvas.width, pixelHeight: canvas.height}); }catch(e){}
+
+    return {
+      canvas: canvas,
+      widthInches: widthInches,
+      heightInches: heightInches
+    };
   }
 
-  // Generate PDF checklist
-  async function generateChecklistPDF() {
+  // Generate stat sheets PDF
+  async function generateStatsheetsPDF() {
     // Create and show progress overlay
     const progressOverlay = document.createElement('div');
     progressOverlay.id = 'pdfProgress';
     progressOverlay.innerHTML = `
       <div class="pdf-progress-box">
-        <div class="pdf-progress-title">Generating Checklist PDF</div>
+        <div class="pdf-progress-title">Generating Stat Sheets PDF</div>
         <div class="pdf-progress-bar">
           <div class="pdf-progress-fill" id="pdfProgressFill"></div>
         </div>
@@ -396,193 +522,187 @@
     }
     
     try {
-      updateProgress(10, 'Loading PDF library...');
-      
-      // Load jsPDF if not already loaded
+      updateProgress(5, 'Loading libraries...');
+
+      // Load pdf.js and jsPDF if not already loaded
+      if(!window.pdfjsLib){
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js');
+        if(window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+      }
       if(!window.jspdf){
         await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
         if(window.jspdf && window.jspdf.jsPDF) window.jsPDF = window.jspdf.jsPDF; else if(window.jspdf) window.jsPDF = window.jspdf;
       }
-      
-      updateProgress(20, 'Initializing document...');
+
+      updateProgress(15, 'Organizing selected units...');
 
       const { jsPDF } = window;
+
+      // Get selected units and organize by faction and slot
+      const selectedUnits = getAllUnits().filter(unit => selectedStatsheets.has(unit.id));
       
-      // Create PDF document (portrait letter size)
-      const doc = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
-      
-      // Set up positioning
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
-      const margin = 10;
-      const columnWidth = (pageWidth - (3 * margin)) / 2; // Two columns with margin between
-      const leftColumnX = margin;
-      const rightColumnX = margin + columnWidth + margin;
-      
-      let currentY = margin;
-      const lineHeight = 8;
-      const imageSize = 12; // Slightly smaller for two-column layout
-      const checkboxSize = 4; // Increased from 3 to 4 for better checkmark visibility
-      
-      updateProgress(30, 'Setting up layout...');
-      
-      // Title
-      doc.setFontSize(16);
-      doc.setFont(undefined, 'bold');
-      doc.text('Zynvaded Model Checklist', pageWidth / 2, currentY + 6, { align: 'center' });
-      currentY += 20;
-      
-      // Count total factions for progress tracking
-      const totalFactions = FACTION_ORDER.filter(factionId => {
-        const units = UNITS[factionId] || [];
-        return units.length > 0;
-      }).length;
-      let processedFactions = 0;
-      
-      // Process each faction
-      for (const factionId of FACTION_ORDER) {
-        const faction = FACTIONS.find(f => f.id === factionId);
-        const units = UNITS[factionId] || [];
-        if (!units || units.length === 0) continue;
-        
-        // Group units by slot first to calculate space needed
-        const unitsBySlot = {};
-        units.forEach(unit => {
-          const slot = unit.slot;
-          if (!unitsBySlot[slot]) {
-            unitsBySlot[slot] = [];
-          }
-          unitsBySlot[slot].push(unit);
-        });
-        
-        // Calculate approximate height needed for this faction in two-column layout
-        const slotCount = Object.keys(unitsBySlot).length;
-        const unitCount = units.length;
-        
-        // Estimate height more accurately for two-column layout
-        // Faction header + estimated slots per column + estimated units per column + spacing
-        const averageUnitsPerSlot = unitCount / slotCount;
-        const estimatedSlotsPerColumn = Math.ceil(slotCount / 2);
-        const estimatedUnitsPerColumn = Math.ceil(unitCount / 2);
-        const estimatedColumnHeight = (estimatedSlotsPerColumn * 15) + (estimatedUnitsPerColumn * (imageSize + 2)) + 10;
-        const factionHeight = 15 + estimatedColumnHeight + 10; // Header + column content + spacing
-        
-        // Check if faction fits beneath current position on the page
-        if (currentY + factionHeight > pageHeight - margin) {
-          doc.addPage();
-          currentY = margin;
-        }
-        
-        // Update progress for this faction
-        const factionProgress = 40 + (processedFactions / totalFactions) * 50; // 40-90% range
-        updateProgress(factionProgress, `Processing ${faction.name}...`);
-        
-        // Faction header (spans full width)
-        doc.setFontSize(14);
-        doc.setFont(undefined, 'bold');
-        doc.text(faction.name, margin, currentY + 5);
-        currentY += 15;
-        
-        // Track column positions
-        let leftColumnY = currentY;
-        let rightColumnY = currentY;
-        let currentColumn = 'left'; // Start with left column
-        
-        // Process each slot in two-column layout
-        for (const [slot, slotUnits] of Object.entries(unitsBySlot)) {
-          // Choose column with less content
-          const useLeftColumn = leftColumnY <= rightColumnY;
-          let columnX = useLeftColumn ? leftColumnX : rightColumnX;
-          let columnY = useLeftColumn ? leftColumnY : rightColumnY;
-          
-          // Check if slot fits in current column
-          const slotHeight = 15 + (slotUnits.length * (imageSize + 3)) + 5;
-          if (columnY + slotHeight > pageHeight - margin) {
-            // Try other column
-            if (useLeftColumn && rightColumnY + slotHeight <= pageHeight - margin) {
-              columnX = rightColumnX;
-              columnY = rightColumnY;
-            } else if (!useLeftColumn && leftColumnY + slotHeight <= pageHeight - margin) {
-              columnX = leftColumnX;
-              columnY = leftColumnY;
-            } else {
-              // Neither column has space, start new page
-              doc.addPage();
-              currentY = margin;
-              leftColumnY = currentY;
-              rightColumnY = currentY;
-              columnX = leftColumnX;
-              columnY = currentY;
-            }
-          }
-          
-          // Slot header
-          doc.setFontSize(12);
-          doc.setFont(undefined, 'bold');
-          doc.text(slot, columnX + 5, columnY + 4);
-          columnY += 10;
-          
-          // Process units in this slot
-          for (const unit of slotUnits) {
-            const isChecked = checkedModels.has(unit.id);
-            
-            // Draw checkbox (align top with image)
-            doc.setDrawColor(0);
-            doc.setFillColor(255, 255, 255);
-            doc.rect(columnX + 5, columnY, checkboxSize, checkboxSize, 'FD');
-            
-            if (isChecked) {
-              doc.setFont(undefined, 'bold');
-              doc.setFontSize(10); // Increased from 6 to 10 for better visibility
-              doc.setTextColor(0, 0, 0); // Ensure black color
-              doc.text('X', columnX + 5 + (checkboxSize/2), columnY + (checkboxSize/2) + 1.5, { align: 'center' });
-              doc.setTextColor(0, 0, 0); // Reset text color for subsequent text
-            }
-            
-            // Add unit image if available (aligned with checkbox top)
-            let imageX = columnX + 5 + checkboxSize + 3;
-            if (unit.img) {
-              try {
-                const imgData = await imageToBase64(unit.img);
-                doc.addImage(imgData, 'PNG', imageX, columnY, imageSize, imageSize);
-              } catch (e) {
-                console.warn('Could not load image for', unit.name, e);
-              }
-            }
-            
-            // Add unit name (vertically centered with image)
-            doc.setFont(undefined, 'normal');
-            doc.setFontSize(8);
-            const textX = imageX + imageSize + 3;
-            const textY = columnY + (imageSize / 2) + 1;
-            
-            // Ensure text doesn't exceed column width
-            const maxTextWidth = columnWidth - (textX - columnX);
-            const lines = doc.splitTextToSize(unit.name, maxTextWidth);
-            doc.text(lines[0], textX, textY); // Only show first line to keep compact
-            
-            columnY += imageSize + 2;
-          }
-          
-          columnY += 5; // Extra space after slot
-          
-          // Update the appropriate column position
-          if (columnX === leftColumnX) {
-            leftColumnY = columnY;
-          } else {
-            rightColumnY = columnY;
-          }
-        }
-        
-        // Move to next position after both columns
-        currentY = Math.max(leftColumnY, rightColumnY) + 10;
-        
-        // Increment processed factions counter
-        processedFactions++;
+      if (selectedUnits.length === 0) {
+        alert('No stat sheets selected. Please select some units first.');
+        document.body.removeChild(progressOverlay);
+        return;
       }
+
+      // Group by faction first, then by slot within each faction
+      const unitsByFactionAndSlot = {};
+      selectedUnits.forEach(unit => {
+        const factionId = FACTION_ORDER.find(f => UNITS[f] && UNITS[f].some(u => u.id === unit.id));
+        if (!factionId) return;
+        
+        if (!unitsByFactionAndSlot[factionId]) {
+          unitsByFactionAndSlot[factionId] = {};
+        }
+        
+        const slot = unit.slot;
+        if (!unitsByFactionAndSlot[factionId][slot]) {
+          unitsByFactionAndSlot[factionId][slot] = [];
+        }
+        
+        unitsByFactionAndSlot[factionId][slot].push(unit);
+      });
+
+      updateProgress(25, 'Processing stat sheets...');
+
+      // Create ordered list: faction -> slot -> units
+      const orderedUnits = [];
+      for (const factionId of FACTION_ORDER) {
+        if (unitsByFactionAndSlot[factionId]) {
+          const slotOrder = ['LEADER', 'SUPPORT', 'SCOUT', 'ATTACHMENT', 'SPECIAL', 'ANY SLOT', 'NONE', 'LEADER/SUPPORT'];
+          for (const slot of slotOrder) {
+            if (unitsByFactionAndSlot[factionId][slot]) {
+              orderedUnits.push(...unitsByFactionAndSlot[factionId][slot]);
+            }
+          }
+          // Add any other slots that weren't in our standard order
+          Object.keys(unitsByFactionAndSlot[factionId]).forEach(slot => {
+            if (!slotOrder.includes(slot) && unitsByFactionAndSlot[factionId][slot]) {
+              orderedUnits.push(...unitsByFactionAndSlot[factionId][slot]);
+            }
+          });
+        }
+      }
+
+      // Render each unit's PDF to PNG
+      const images = [];
+      const totalUnits = orderedUnits.length;
       
-      updateProgress(90, 'Finalizing PDF...');
+      for (let i = 0; i < orderedUnits.length; i++) {
+        const unit = orderedUnits[i];
+        const progressPercent = 25 + (i / totalUnits) * 60; // 25% to 85%
+        updateProgress(progressPercent, `Processing ${unit.name}...`);
+        
+        try {
+          const pdfPath = getPdfPath(unit);
+          const rendered = await renderPdfToPng(pdfPath);
+          images.push(rendered);
+        } catch (error) {
+          console.warn(`Could not load PDF for ${unit.name}:`, error);
+          // Continue with other units even if one fails
+        }
+      }
+
+      updateProgress(90, 'Creating final PDF...');
+
+      // Create jsPDF document (landscape 11" x 8.5") using inches as units
+      const doc = new jsPDF({orientation:'landscape', unit:'in', format:[11,8.5]});
+      const pageWidth = 11;
+      const pageHeight = 8.5;
       
+      // 3-slot grid system
+      const slotWidth = pageWidth / 3; // Each slot is 11/3 = 3.67 inches wide
+      const slots = [false, false, false]; // Track which slots are occupied in current row
+      let currentY = 0;
+      let maxHeightInRow = 0;
+
+      // Add each image to the PDF with 3-slot grid layout
+      for (let i = 0; i < images.length; i++) {
+        const img = images[i];
+        const imgData = img.canvas.toDataURL('image/png');
+        
+        let imgWidth = img.widthInches;
+        let imgHeight = img.heightInches;
+        
+        // Keep original dimensions, don't scale to fit slot width
+        // Determine how many slots this image needs based on its original width
+        let slotsNeeded = 1;
+        if (imgWidth > slotWidth * 2.5) {
+          slotsNeeded = 3; // Takes full width
+        } else if (imgWidth > slotWidth * 1.5) {
+          slotsNeeded = 2; // Takes 2/3 width
+        } else {
+          slotsNeeded = 1; // Takes 1/3 width
+        }
+        
+        // Scale down proportionally if image height is too large for page
+        if (imgHeight > pageHeight) {
+          const scale = pageHeight / imgHeight;
+          imgHeight = pageHeight;
+          imgWidth *= scale;
+          
+          // Recalculate slots needed after scaling
+          if (imgWidth > slotWidth * 2.5) {
+            slotsNeeded = 3;
+          } else if (imgWidth > slotWidth * 1.5) {
+            slotsNeeded = 2;
+          } else {
+            slotsNeeded = 1;
+          }
+        }
+        
+        // Find available slot position for this image
+        let slotPosition = -1;
+        
+        // Check if we can fit the image in current row
+        for (let slot = 0; slot <= 3 - slotsNeeded; slot++) {
+          let canFit = true;
+          for (let j = 0; j < slotsNeeded; j++) {
+            if (slots[slot + j]) {
+              canFit = false;
+              break;
+            }
+          }
+          if (canFit) {
+            slotPosition = slot;
+            break;
+          }
+        }
+        
+        // If no space in current row, move to next row
+        if (slotPosition === -1) {
+          currentY += maxHeightInRow;
+          slots.fill(false); // Reset slots for new row
+          maxHeightInRow = 0;
+          slotPosition = 0; // Start at beginning of new row
+          
+          // Check if we need a new page
+          if (currentY + imgHeight > pageHeight) {
+            doc.addPage();
+            currentY = 0;
+            maxHeightInRow = 0;
+          }
+        }
+        
+        // Mark slots as occupied
+        for (let j = 0; j < slotsNeeded; j++) {
+          slots[slotPosition + j] = true;
+        }
+        
+        // Calculate X position based on slot
+        const currentX = slotPosition * slotWidth;
+        
+        // Add the image at calculated position
+        doc.addImage(imgData, 'PNG', currentX, currentY, imgWidth, imgHeight);
+        
+        // Update row height
+        maxHeightInRow = Math.max(maxHeightInRow, imgHeight);
+      }
+
+      updateProgress(95, 'Opening PDF...');
+
       // Open PDF in new window
       const pdfBlob = doc.output('blob');
       const pdfUrl = URL.createObjectURL(pdfBlob);
@@ -596,7 +716,7 @@
       }, 500);
       
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      console.error('Error generating stat sheets PDF:', error);
       // Remove overlay on error
       if (document.body.contains(progressOverlay)) {
         document.body.removeChild(progressOverlay);
@@ -614,12 +734,12 @@
     checkAllBtn.addEventListener('click', checkAll);
   }
 
-  if (printChecklistBtn) {
-    printChecklistBtn.addEventListener('click', generateChecklistPDF);
+  if (printStatsBtn) {
+    printStatsBtn.addEventListener('click', generateStatsheetsPDF);
   }
 
   // Initialize
   loadState();
-  renderChecklist();
+  renderStatsheetGrid();
 
 })();
