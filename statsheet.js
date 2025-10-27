@@ -110,7 +110,7 @@
       {id:'attachments-minigun', name:'Minigun Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/MinigunGrub.png'},
       {id:'attachments-rocket', name:'Rocket Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/RocketGrub.png'},
       {id:'attachments-shield', name:'Shield Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/ShieldGrub.png'},
-      {id:'attachments-lbwtank', name:'LBW Tank Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/LBWTankGrub.png'},
+      {id:'attachments-lbwtank', name:'LBW Tank Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/LBWTank.png'},
     ],
     other:[
       {id:'other-tokens', name:'Cry Baby', slot:'OTHER', img:'resources/models/Other/CryBaby.png'},
