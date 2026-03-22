@@ -106,6 +106,8 @@
       {id:'attachments-rocket', name:'Rocket Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Rocketgrub.png'},
       {id:'attachments-shield', name:'Shield Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/Shieldgrub.png'},
       {id:'attachments-lbwtank', name:'LBW Tank Grub', slot:'ATTACHMENT', img:'resources/models/Attachments/LBWtank.png'},
+      {id:'attachments-grubitor', name:'Grub-itor', slot:'ATTACHMENT', img:'resources/models/Attachments/Grubitor.png'},
+
     ],
   };
 
@@ -212,6 +214,8 @@
   m['attachments-rocket'] = 'Rocketgrub.pdf';
   m['attachments-shield'] = 'Shieldgrub.pdf';
   m['attachments-lbwtank'] = 'LBWtankgrub.pdf';
+  m['attachments-grubitor'] = 'Grubitor.pdf';
+
 
     return m;
   })();

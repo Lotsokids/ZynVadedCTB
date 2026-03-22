@@ -102,15 +102,17 @@
       {id:'mercz-zennywise', name:"Zenny'Wise", slot:'LEADER', img:'resources/models/Mercz/ZennyWise.png', type: 'zed-mercz', cbp: 13},
     ],
     attachments:[
-      {id:'attachments-ammo', name:'Ammo Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/AmmoGrub.png'},
-      {id:'attachments-buzz', name:'Buzz Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/BuzzGrub.png'},
-      {id:'attachments-covid', name:'Covid Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/CovidGrub.png'},
-      {id:'attachments-marker', name:'Marker Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/MarkerGrub.png'},
-      {id:'attachments-medic', name:'Medic Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/MedicGrub.png'},
-      {id:'attachments-minigun', name:'Minigun Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/MinigunGrub.png'},
-      {id:'attachments-rocket', name:'Rocket Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/RocketGrub.png'},
-      {id:'attachments-shield', name:'Shield Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/ShieldGrub.png'},
+      {id:'attachments-ammo', name:'Ammo Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/Ammogrub.png'},
+      {id:'attachments-buzz', name:'Buzz Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/Buzzgrub.png'},
+      {id:'attachments-covid', name:'Covid Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/Covidgrub.png'},
+      {id:'attachments-marker', name:'Marker Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/Markergrub.png'},
+      {id:'attachments-medic', name:'Medic Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/Medicgrub.png'},
+      {id:'attachments-minigun', name:'Minigun Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/Minigungrub.png'},
+      {id:'attachments-rocket', name:'Rocket Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/Rocketgrub.png'},
+      {id:'attachments-shield', name:'Shield Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/Shieldgrub.png'},
       {id:'attachments-lbwtank', name:'LBW Tank Grub', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/LBWTank.png'},
+      {id:'attachments-grubitor', name:'Grub-itor', slot:'ATTACHMENT', type:'Support Grub', art:'', img:'resources/models/Attachments/Grubitor.png'},
+      
     ],
     other:[
       {id:'other-tokens', name:'Cry Baby', slot:'OTHER', img:'resources/models/Other/CryBaby.png'},
@@ -152,11 +154,11 @@
     m['zyn-l2'] = 'Sergeant.pdf';
     m['zyn-l5'] = 'Sergeant.pdf';
     m['zyn-l3'] = 'Klatu.pdf';
-    m['zyn-l6'] = 'shotgunner.pdf';
-    m['zyn-l7'] = 'shotgunner.pdf';
-    m['zyn-l8'] = 'shotgunner.pdf';
-    m['zyn-l9'] = 'shotgunner.pdf';
-    m['zyn-l10'] = 'shotgunner.pdf';
+    m['zyn-l6'] = 'Shotgunner.pdf';
+    m['zyn-l7'] = 'Shotgunner.pdf';
+    m['zyn-l8'] = 'Shotgunner.pdf';
+    m['zyn-l9'] = 'Shotgunner.pdf';
+    m['zyn-l10'] = 'Shotgunner.pdf';
     m['zyn-s1'] = 'Brawlr.pdf';
     m['zyn-s2'] = 'Heavy Gunner.pdf';
     m['zyn-s6'] = 'Heavy Gunner.pdf';
@@ -236,6 +238,9 @@
     m['attachments-rocket'] = 'Rocketgrub.pdf';
     m['attachments-shield'] = 'Shieldgrub.pdf';
     m['attachments-lbwtank'] = 'LBWtankgrub.pdf';
+    m['attachments-grubitor'] = 'GrubItor.pdf';
+    
+
 
     // Other
     m['other-tokens'] = 'Crybaby.pdf';
