@@ -214,7 +214,7 @@
   m['attachments-rocket'] = 'Rocketgrub.pdf';
   m['attachments-shield'] = 'Shieldgrub.pdf';
   m['attachments-lbwtank'] = 'LBWtankgrub.pdf';
-  m['attachments-grubitor'] = 'Grubitor.pdf';
+  m['attachments-grubitor'] = 'GrubItor.pdf';
 
 
     return m;
