@@ -300,6 +300,31 @@ button:disabled{opacity:.45;cursor:not-allowed}
 
 .model-art{height:55px;border-radius:4px;background:linear-gradient(135deg,rgba(90,90,110,0.14),rgba(20,30,40,0.14));display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700;margin-bottom:6px}
 
+.hidden{display:none !important;}
+
+.play-area{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.play-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.play-header h2{margin:0;font-size:18px}
+.play-status{color:var(--muted);font-size:13px;margin-top:4px}
+.play-header-actions{display:flex;gap:10px;flex-wrap:wrap}
+.play-pane{display:flex;gap:18px;flex-wrap:wrap}
+.play-selection{flex:0 0 280px;min-width:260px;max-height:680px;overflow:auto}
+.play-selection h3{margin:0 0 10px;font-size:16px}
+.selected-play-list{display:flex;flex-direction:column;gap:8px}
+.play-unit-item{padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);cursor:pointer;transition:background .15s ease,border .15s ease;border:1px solid rgba(255,255,255,0.06)}
+.play-unit-item:hover{background:rgba(255,255,255,0.04)}
+.play-unit-item.active{background:rgba(96,165,250,0.15);border-color:rgba(96,165,250,0.22)}
+.play-unit-item .play-unit-name{font-weight:700;font-size:14px}
+.play-unit-item .play-unit-meta{font-size:12px;color:var(--muted);margin-top:4px}
+.play-empty{color:var(--muted);font-size:13px;padding:14px;background:rgba(255,255,255,0.02);border-radius:8px}
+.play-canvas-container{flex:1;min-width:320px;position:relative;background:rgba(255,255,255,0.02);border-radius:12px;padding:14px}
+.play-canvas-wrapper{position:relative;overflow:hidden;border-radius:10px;background:#071018}
+.play-canvas-wrapper canvas{display:block;width:100%;height:auto}
+.play-overlay-canvas{position:absolute;left:0;top:0;pointer-events:auto}
+.play-overlay-info{margin-top:12px;font-size:13px;color:var(--muted)}
+.play-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.play-controls button{padding:10px 14px}
+
 .model-art img{width:100%;height:100%;object-fit:contain;border-radius:4px}
 
 .model-info{text-align:center}

@@ -18,3 +18,18 @@ Notes
 - This is a minimal, self-contained implementation meant to be extended with real assets and persistence.
  - Switching factions will clear the current selection; the change is pushed to the undo stack so you can restore with Undo.
  - Keyboard: Ctrl+Z (Undo), Ctrl+Y (Redo). Use Enter to activate a focused faction tile.
+
+
+Move Local Changes to GitHub (Quick Steps)
+
+Check status:
+git status
+
+Stage files: (or just specific files: git add app.js index.html)
+git add .
+
+Commit:
+git commit -m "Describe your change"
+
+Push to your branch (for main branch):
+git push origin main

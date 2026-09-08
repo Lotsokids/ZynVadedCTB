@@ -34,6 +34,34 @@
       <section id="statsheetGrid" class="checklist-grid">
         <!-- Faction sections will be populated here -->
       </section>
+
+      <section id="playArea" class="play-area hidden">
+        <div class="play-header">
+          <div>
+            <h2>Play Game Mode</h2>
+            <div id="playStatus" class="play-status">Select a stat sheet to open and use interactive circle markers.</div>
+          </div>
+          <div class="play-header-actions">
+            <button id="playRefreshBtn">Refresh Selection</button>
+            <button id="resetCirclesBtn">Reset Active Marks</button>
+          </div>
+        </div>
+        <div class="play-pane">
+          <div class="play-selection">
+            <h3>Selected Stat Sheets</h3>
+            <div id="selectedPlayList" class="selected-play-list"></div>
+          </div>
+          <div class="play-canvas-container">
+            <div class="play-canvas-wrapper">
+              <canvas id="playPdfCanvas"></canvas>
+              <canvas id="playOverlayCanvas" class="play-overlay-canvas"></canvas>
+            </div>
+            <div class="play-overlay-info">
+              Click mapped circles to toggle them on or off during play. If a sheet has no mapping, use the circle mapper at <code>circle-mapper/index.html</code>.
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <script src="statsheet.js"></script>

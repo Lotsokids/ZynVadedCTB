@@ -87,11 +87,14 @@
       {id:'mercz-dash', name:"D'Ash", slot:'LEADER', img:'resources/models/Mercz/DAsh.png', type: 'mercz'},
       {id:'mercz-deviant', name:"Devi'Ant", slot:'SCOUT', img:'resources/models/Mercz/DeviAnt.png', type: 'mercz'},
       {id:'mercz-dezell', name:"De'Zell", slot:'ANY SLOT', img:'resources/models/Mercz/DeZell.png', type: 'mercz'},
+      {id:'mercz-fytesuit', name:"Fyte'Suit", slot:'SUPPORT', img:'resources/models/Mercz/FyteSuit.png', type: 'mercz'},
       {id:'mercz-hobehorze', name:"Hob'EHorze", slot:'SCOUT', img:'resources/models/Mercz/Hobehorze.png', type: 'mercz'},
       {id:'mercz-komobai', name:"Ko'Mo'Bai", slot:'LEADER', img:'resources/models/Mercz/KoMoBai.png', type: 'mercz'},
       {id:'mercz-kopekat', name:"Kop'Ekat", slot:'SCOUT', img:'resources/models/Mercz/KopEkat.png', type: 'mercz'},
       {id:'mercz-logaan', name:"Lo'gaan", slot:'SUPPORT', img:'resources/models/Mercz/Logaan.png', type: 'mercz'},
+      {id:'mercz-nookdookm', name:"Nook Dook'M", slot:'SUPPORT', img:'resources/models/Mercz/NookDookM.png', type: 'mercz'},
       {id:'mercz-z800', name:'Z-800', slot:'SUPPORT', img:'resources/models/Mercz/Z800.png', type: 'mercz'},
+      {id:'mercz-zandogoogoo', name:"Zan'Do Lor'Yann & Goo'Goo", slot:'LEADER', img:'resources/models/Mercz/ZandoGoogoo.png', type: 'mercz'},
       {id:'mercz-zautja', name:"Zaut'Ja", slot:'NONE', img:'resources/models/Mercz/Zautja.png', type: 'mercz'},
       {id:'mercz-zautja2', name:"Zaut'Ja (Stealth)", slot:'NONE', img:'resources/models/Mercz/ZautjaClear.png', type: 'mercz'},
       {id:'mercz-zedpul', name:"Zed'Pul", slot:'SCOUT', img:'resources/models/Mercz/ZedPul.png', type: 'mercz'},
@@ -212,11 +215,14 @@
     m['mercz-dash'] = 'Dash.pdf';
     m['mercz-deviant'] = 'Deviant.pdf';
     m['mercz-dezell'] = 'Dezell.pdf';
+    m['mercz-fytesuit'] = 'FyteSuit.pdf';
     m['mercz-hobehorze'] = 'Hobehorze.pdf';
     m['mercz-komobai'] = 'Komabai.pdf';
     m['mercz-kopekat'] = 'Kopekat.pdf';
     m['mercz-logaan'] = 'Logaan.pdf';
+    m['mercz-nookdookm'] = 'NookDookM.pdf';
     m['mercz-z800'] = 'Z800.pdf';
+    m['mercz-zandogoogoo'] = 'ZandoGoogoo.pdf';
     m['mercz-zautja'] = 'Zautja.pdf';
     m['mercz-zautja2'] = 'Zautja.pdf';
     m['mercz-zedpul'] = 'Zedpul.pdf';
@@ -278,6 +284,14 @@
   const clearAllBtn = document.getElementById('clearAllBtn');
   const checkAllBtn = document.getElementById('checkAllBtn');
   const printStatsBtn = document.getElementById('printStatsBtn');
+  // const playStatsBtn = document.getElementById('playStatsBtn'); // TODO: re-enable when Play Game Mode is ready
+  const playArea = document.getElementById('playArea');
+  const playStatus = document.getElementById('playStatus');
+  const playRefreshBtn = document.getElementById('playRefreshBtn');
+  const resetCirclesBtn = document.getElementById('resetCirclesBtn');
+  const selectedPlayList = document.getElementById('selectedPlayList');
+  const playPdfCanvas = document.getElementById('playPdfCanvas');
+  const playOverlayCanvas = document.getElementById('playOverlayCanvas');
 
   // Save state to localStorage
   function saveState() {
@@ -329,6 +343,265 @@
     const selectedCount = selectedStatsheets.size;
     progressText.textContent = `${selectedCount} of ${totalUnits} stat sheets selected`;
   }
+
+  // Play game mode state and helpers
+  const playState = {
+    currentUnitId: null,
+    markers: [],
+    pdfDoc: null,
+    viewport: null,
+  }; 
+  const playCanvasContext = playPdfCanvas ? playPdfCanvas.getContext('2d') : null;
+  const playOverlayContext = playOverlayCanvas ? playOverlayCanvas.getContext('2d') : null;
+
+  function getSelectedStatsheetIds() {
+    try {
+      const raw = localStorage.getItem('zynvaded-statsheets');
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function getSelectedUnits() {
+    const selectedIds = new Set(getSelectedStatsheetIds());
+    return getAllUnits().filter(unit => selectedIds.has(unit.id));
+  }
+
+  function updatePlayStatus(text) {
+    if (playStatus) playStatus.textContent = text;
+  }
+
+  function togglePlayArea(show) {
+    if (!playArea) return;
+    if (show) {
+      playArea.classList.remove('hidden');
+    } else {
+      playArea.classList.add('hidden');
+    }
+  }
+
+  function renderPlayUnitList() {
+    if (!selectedPlayList) return;
+    const selectedUnits = getSelectedUnits();
+    selectedPlayList.innerHTML = '';
+
+    if (selectedUnits.length === 0) {
+      selectedPlayList.innerHTML = `
+        <div class="play-empty">
+          No selected stat sheets found. Choose some units on the Stat Sheets page and refresh this view.
+        </div>
+      `;
+      return;
+    }
+
+    selectedUnits.forEach(unit => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'play-unit-item';
+      if (playState.currentUnitId === unit.id) {
+        item.classList.add('active');
+      }
+      item.innerHTML = `
+        <div class="play-unit-name">${unit.name}</div>
+        <div class="play-unit-meta">${unit.slot}${unit.type ? ` • ${unit.type}` : ''}</div>
+      `;
+      item.addEventListener('click', () => {
+        loadPlayUnitSheet(unit.id);
+      });
+      selectedPlayList.appendChild(item);
+    });
+  }
+
+  async function renderPlayPdf(url) {
+    if (!playPdfCanvas || !playOverlayCanvas || !playCanvasContext) return;
+
+    if (!window.pdfjsLib) {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js');
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+      }
+    }
+
+    updatePlayStatus('Loading PDF page...');
+    const fetchUrl = url.replace(/\?.*$/, '') + '?_nocache=' + Date.now();
+    const response = await fetch(fetchUrl);
+    if (!response.ok) {
+      throw new Error('Failed to fetch PDF');
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    const pdf = await window.pdfjsLib.getDocument({data: arrayBuffer}).promise;
+    const page = await pdf.getPage(1);
+    const scale = 1.5;
+    const viewport = page.getViewport({scale});
+
+    playPdfCanvas.width = Math.round(viewport.width);
+    playPdfCanvas.height = Math.round(viewport.height);
+    playOverlayCanvas.width = playPdfCanvas.width;
+    playOverlayCanvas.height = playPdfCanvas.height;
+    playOverlayCanvas.style.width = `${playPdfCanvas.clientWidth}px`;
+    playOverlayCanvas.style.height = `${playPdfCanvas.clientHeight}px`;
+
+    playState.pdfDoc = pdf;
+    playState.viewport = viewport;
+
+    await page.render({canvasContext: playCanvasContext, viewport}).promise;
+  }
+
+  async function loadPlayCircleData(sheetName) {
+    playState.markers = [];
+    try {
+      const response = await fetch(`resources/circle-data/${encodeURIComponent(sheetName)}.json?_cb=${Date.now()}`);
+      if (!response.ok) {
+        throw new Error('Not found');
+      }
+      const data = await response.json();
+      if (!data || !Array.isArray(data.circles)) {
+        throw new Error('Invalid circle data');
+      }
+      playState.markers = data.circles.map(circle => ({
+        xPct: Number(circle.xPct),
+        yPct: Number(circle.yPct),
+        category: String(circle.category || 'Other'),
+        active: false,
+      }));
+      updatePlayStatus(`Loaded ${playState.markers.length} mapped circles for ${sheetName}.`);
+    } catch (err) {
+      updatePlayStatus(`No circle mapping found for ${sheetName}. Use circle-mapper to create it.`);
+      playState.markers = [];
+    }
+  }
+
+  function drawPlayOverlay() {
+    if (!playOverlayCanvas || !playOverlayContext) return;
+    const canvas = playOverlayCanvas;
+    const ctx = playOverlayContext;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!playState.markers.length) return;
+
+    ctx.font = 'bold 14px Inter, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    playState.markers.forEach((marker, index) => {
+      const x = marker.xPct * canvas.width;
+      const y = marker.yPct * canvas.height;
+      const radius = Math.max(12, canvas.width * 0.015);
+      if (marker.active) {
+        ctx.fillStyle = 'rgba(96, 209, 255, 0.55)';
+        ctx.strokeStyle = 'rgba(96, 209, 255, 1)';
+      } else {
+        ctx.fillStyle = 'rgba(96, 209, 255, 0.22)';
+        ctx.strokeStyle = 'rgba(96, 209, 255, 0.9)';
+      }
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = marker.active ? '#07101a' : '#07101a';
+      ctx.fillText(String(index + 1), x, y);
+    });
+  }
+
+  async function loadPlayUnitSheet(unitId) {
+    const unit = getAllUnits().find(u => u.id === unitId);
+    if (!unit) {
+      updatePlayStatus('Selected unit could not be found.');
+      return;
+    }
+
+    playState.currentUnitId = unitId;
+    renderPlayUnitList();
+    try {
+      const pdfPath = getPdfPath(unit);
+      await renderPlayPdf(pdfPath);
+      const pdfFile = PDF_MAP[unit.id] || `${encodeURIComponent(unit.name)}.pdf`;
+      const sheetName = pdfFile.replace(/\.pdf$/i, '');
+      await loadPlayCircleData(sheetName);
+      drawPlayOverlay();
+    } catch (err) {
+      console.error(err);
+      updatePlayStatus('Unable to render the stat sheet. See console for details.');
+    }
+  }
+
+  function handlePlayOverlayClick(event) {
+    if (!playOverlayCanvas || !playState.markers.length) return;
+    const rect = playOverlayCanvas.getBoundingClientRect();
+    const x = ((event.clientX - rect.left) * playOverlayCanvas.width) / rect.width;
+    const y = ((event.clientY - rect.top) * playOverlayCanvas.height) / rect.height;
+    const hitRadius = Math.max(18, playOverlayCanvas.width * 0.02);
+
+    let nearestIndex = -1;
+    let nearestDistance = Infinity;
+    playState.markers.forEach((marker, index) => {
+      const dx = x - marker.xPct * playOverlayCanvas.width;
+      const dy = y - marker.yPct * playOverlayCanvas.height;
+      const distance = Math.hypot(dx, dy);
+      if (distance < hitRadius && distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestIndex = index;
+      }
+    });
+
+    if (nearestIndex >= 0) {
+      playState.markers[nearestIndex].active = !playState.markers[nearestIndex].active;
+      drawPlayOverlay();
+      const marker = playState.markers[nearestIndex];
+      updatePlayStatus(`Circle ${nearestIndex + 1} ${marker.active ? 'activated' : 'deactivated'} (${marker.category}).`);
+    }
+  }
+
+  function resetPlayMarkers() {
+    if (!playState.markers.length) return;
+    playState.markers.forEach(marker => marker.active = false);
+    drawPlayOverlay();
+    updatePlayStatus('All play markers were reset.');
+  }
+
+  function refreshPlaySelection() {
+    renderPlayUnitList();
+    const selectedUnits = getSelectedUnits();
+    if (selectedUnits.length === 0) {
+      togglePlayArea(false);
+      return;
+    }
+    if (!playState.currentUnitId || !selectedUnits.some(u => u.id === playState.currentUnitId)) {
+      loadPlayUnitSheet(selectedUnits[0].id);
+    }
+  }
+
+  async function activatePlayMode() {
+    const selectedUnits = getSelectedUnits();
+    if (selectedUnits.length === 0) {
+      updatePlayStatus('No selected sheets. Please choose stat sheets first.');
+      togglePlayArea(true);
+      return;
+    }
+    togglePlayArea(true);
+    renderPlayUnitList();
+    if (!playState.currentUnitId || !selectedUnits.some(u => u.id === playState.currentUnitId)) {
+      await loadPlayUnitSheet(selectedUnits[0].id);
+    }
+  }
+
+  if (playOverlayCanvas) {
+    playOverlayCanvas.addEventListener('click', handlePlayOverlayClick);
+  }
+
+  if (resetCirclesBtn) {
+    resetCirclesBtn.addEventListener('click', resetPlayMarkers);
+  }
+
+  if (playRefreshBtn) {
+    playRefreshBtn.addEventListener('click', refreshPlaySelection);
+  }
+
+  // if (playStatsBtn) {
+  //   playStatsBtn.addEventListener('click', activatePlayMode);
+  // }
 
   // Render the statsheet grid
   function renderStatsheetGrid() {

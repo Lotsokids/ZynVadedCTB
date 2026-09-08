@@ -77,20 +77,23 @@
       {id:'mercz-amus-2', name:'Amus the Hunter', slot:'SUPPORT', img:'resources/models/Mercz/Amus.png', type: 'mercz'},
       {id:'mercz-balodek', name:"Balo'Dek", slot:'SUPPORT', img:'resources/models/Mercz/Balodek.png', type: 'mercz'},
       {id:'mercz-capzmerica', name:"Cap Z'Merica", slot:'LEADER', img:'resources/models/Mercz/CapZMerica.png', type: 'mercz'},
+      {id:'mercz-capzmerica-2', name:"Cap Z'Merica Alt 2026", slot:'LEADER', img:'resources/models/Mercz/CapZMericaEvent2026.png', type: 'mercz'},
       {id:'mercz-dash', name:"D'Ash", slot:'LEADER', img:'resources/models/Mercz/DAsh.png', type: 'mercz'},
       {id:'mercz-deviant', name:"Devi'Ant", slot:'SCOUT', img:'resources/models/Mercz/DeviAnt.png', type: 'mercz'},
       {id:'mercz-dezell', name:"De'Zell", slot:'LEADER', img:'resources/models/Mercz/DeZell.png', type: 'mercz'},
       {id:'mercz-dezell-2', name:"De'Zell", slot:'SUPPORT', img:'resources/models/Mercz/DeZell.png', type: 'mercz'},
       {id:'mercz-dezell-3', name:"De'Zell", slot:'SCOUT', img:'resources/models/Mercz/DeZell.png', type: 'mercz'},
+      {id:'mercz-fytesuit', name:"Fyte'Suit", slot:'SUPPORT', img:'resources/models/Mercz/FyteSuit.png', type: 'mercz'},
       {id:'mercz-hobehorze', name:"Hob'EHorze", slot:'SCOUT', img:'resources/models/Mercz/Hobehorze.png', type: 'mercz'},
       {id:'mercz-komobai', name:"Ko'Mo'Bai", slot:'LEADER', img:'resources/models/Mercz/KoMoBai.png', type: 'mercz'},
       {id:'mercz-kopekat', name:"Kop'Ekat", slot:'SCOUT', img:'resources/models/Mercz/KopEkat.png', type: 'mercz'},
       {id:'mercz-logaan', name:"Lo'gaan", slot:'SUPPORT', img:'resources/models/Mercz/Logaan.png', type: 'mercz'},
+      {id:'mercz-nookdookm', name:"Nook Dook'M", slot:'SUPPORT', img:'resources/models/Mercz/NookDookM.png', type: 'mercz'},
       {id:'mercz-z800', name:'Z-800', slot:'SUPPORT', img:'resources/models/Mercz/Z800.png', type: 'mercz'},
+      {id:'mercz-zandogoogoo', name:"Zan'Do Lor'Yann & Goo'Goo", slot:'LEADER', img:'resources/models/Mercz/ZandoGoogoo.png', type: 'mercz'},
       {id:'mercz-zautja', name:"Zaut'Ja", slot:'NONE', img:'resources/models/Mercz/Zautja.png', type: 'mercz'},
       {id:'mercz-zedpul', name:"Zed'Pul", slot:'SCOUT', img:'resources/models/Mercz/ZedPul.png', type: 'mercz'},
       {id:'mercz-zobafezz', name:'Zoba Fezz', slot:'NONE', img:'resources/models/Mercz/ZobaFezz.png', type: 'mercz'},
-
       {id:'mercz-jazon', name:"Ja'Zon", slot:'SUPPORT', img:'resources/models/Mercz/Jazon.png', type: 'zed-mercz', bp: 10},
       {id:'mercz-pinzed', name:'Pin-Zed', slot:'LEADER', img:'resources/models/Mercz/PinZed.png', type: 'zed-mercz', cbp: 15},
       {id:'mercz-tex', name:'Tex', slot:'SUPPORT', img:'resources/models/Mercz/Tex.png', type: 'zed-mercz', bp: 10},
@@ -184,16 +187,20 @@
     m['mercz-amus-2'] = 'Amusthehunter.pdf';
     m['mercz-balodek'] = 'Balodek.pdf';
     m['mercz-capzmerica'] = 'Capzmerica.pdf';
+    m['mercz-capzmerica-2'] = 'CapZMerica.pdf';
     m['mercz-dash'] = 'Dash.pdf';
     m['mercz-deviant'] = 'Deviant.pdf';
     m['mercz-dezell'] = 'Dezell.pdf';
     m['mercz-dezell-2'] = 'Dezell.pdf';
     m['mercz-dezell-3'] = 'Dezell.pdf';
+    m['mercz-fytesuit'] = 'FyteSuit.pdf';
     m['mercz-hobehorze'] = 'Hobehorze.pdf';
     m['mercz-komobai'] = 'Komabai.pdf';
     m['mercz-kopekat'] = 'Kopekat.pdf';
     m['mercz-logaan'] = 'Logaan.pdf';
+    m['mercz-nookdookm'] = 'NookDookM.pdf';
     m['mercz-z800'] = 'Z800.pdf';
+    m['mercz-zandogoogoo'] = 'ZandoGoogoo.pdf';
     m['mercz-zautja'] = 'Zautja.pdf';
     m['mercz-zedpul'] = 'Zedpul.pdf';
     m['mercz-zobafezz'] = 'Zobafezz.pdf';
@@ -249,6 +256,7 @@
   const selectedList = document.getElementById('selectedList');
   const clearBtn = document.getElementById('clearBtn');
   const confirmBtn = document.getElementById('confirmBtn');
+  const playGameBtn = document.getElementById('playGameBtn');
   const compHint = document.getElementById('compHint');
   const merczModeControls = document.getElementById('merczModeControls');
   const merczInlineRadio = document.getElementById('merczInline');
@@ -261,7 +269,7 @@
   // Runtime sanity check: ensure critical DOM refs exist and expose debug hooks
   (function runtimeSanity(){
     const missing = [];
-    [['factionTiles', factionTiles], ['unitGrid', unitGrid], ['selectedList', selectedList], ['clearBtn', clearBtn], ['confirmBtn', confirmBtn]].forEach(([name, ref])=>{ if(!ref) missing.push(name); });
+    [['factionTiles', factionTiles], ['unitGrid', unitGrid], ['selectedList', selectedList], ['clearBtn', clearBtn], ['confirmBtn', confirmBtn], ['playGameBtn', playGameBtn]].forEach(([name, ref])=>{ if(!ref) missing.push(name); });
     if(missing.length>0){
       console.error('CTB init: missing DOM refs: ', missing);
       const overlay = document.createElement('div');
@@ -1087,6 +1095,9 @@
       confirmBtn.disabled = false;
     }
 
+    // Sync Play Game button state with confirmation button state
+    if(playGameBtn) playGameBtn.disabled = confirmBtn.disabled;
+
     // Remove any legacy .control-bp element when present; header now shows the value for Zedz
     const rightPanel = document.querySelector('.panel-right');
     if(rightPanel){
@@ -1364,6 +1375,233 @@
   if(confirmBtn) confirmBtn.disabled = false;
       console.error('Error building combined PDF', err);
       alert('Error building combined PDF: ' + (err && err.message));
+    }
+  });
+
+  // Play Game action: build combined PDF and open viewer with overlay controls
+  if(playGameBtn) playGameBtn.addEventListener('click', async ()=>{
+    if(playGameBtn.disabled) return;
+    try{
+      if(playGameBtn) playGameBtn.disabled = true;
+      
+      function loadScript(src){
+        return new Promise((resolve, reject)=>{
+          if(document.querySelector(`script[src="${src}"]`)) return resolve();
+          const s = document.createElement('script'); s.src = src; s.onload = ()=>resolve(); s.onerror = (e)=>reject(e); document.head.appendChild(s);
+        });
+      }
+
+      if(!window.pdfjsLib){
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js');
+        if(window.pdfjsLib) window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+      }
+      if(!window.jspdf){
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+        if(window.jspdf && window.jspdf.jsPDF) window.jsPDF = window.jspdf.jsPDF; else if(window.jspdf) window.jsPDF = window.jspdf;
+      }
+
+      const pdfjs = window.pdfjsLib;
+      const { jsPDF } = window;
+
+      async function renderPdfToPng(url){
+        const sep = url.indexOf('?') === -1 ? '?' : '&';
+        const fetchUrl = url + sep + '_cb=' + Date.now();
+        const resp = await fetch(fetchUrl);
+        if(!resp.ok) throw new Error('Failed to fetch ' + url);
+        const buf = await resp.arrayBuffer();
+        const loadingTask = pdfjs.getDocument({data: buf});
+        const srcDoc = await loadingTask.promise;
+        const page = await srcDoc.getPage(1);
+        const viewBox = (page.view && page.view.length === 4) ? page.view : page.getViewport({scale:1}).view;
+        const pageWidthPts = Math.abs(viewBox[2] - viewBox[0]);
+        const pageHeightPts = Math.abs(viewBox[3] - viewBox[1]);
+
+        const renderScale = 2.0;
+        const viewport = page.getViewport({scale: renderScale});
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+        const ctx = canvas.getContext('2d');
+        const renderTask = page.render({canvasContext: ctx, viewport});
+        await renderTask.promise;
+        const dataUrl = canvas.toDataURL('image/png');
+        try{ page.cleanup && page.cleanup(); srcDoc.cleanup && srcDoc.cleanup(); } catch(e){}
+
+        const widthInches = pageWidthPts / 72;
+        const heightInches = pageHeightPts / 72;
+
+        return {
+          dataUrl,
+          pageWidthPts,
+          pageHeightPts,
+          widthInches,
+          heightInches,
+          pixelWidth: canvas.width,
+          pixelHeight: canvas.height,
+        };
+      }
+
+      const leaders = state.selected.filter(s => s.slot === 'LEADER');
+      const supports = state.selected.filter(s => s.slot === 'SUPPORT');
+      const scouts = state.selected.filter(s => s.slot === 'SCOUT');
+      const mercs = state.selected.filter(s => s.slot === 'MERCZ');
+      const attachments = state.selected.filter(s => s.slot === 'ATTACHMENT');
+      const ordered = [].concat(leaders, supports, scouts, mercs, attachments);
+      const orderedUnique = [];
+      const seenIds = new Set();
+      for(const u of ordered){
+        if(!u || !u.id) continue;
+        if(!seenIds.has(u.id)){
+          orderedUnique.push(u);
+          seenIds.add(u.id);
+        }
+      }
+      if(orderedUnique.length === 0) throw new Error('No selected units to combine');
+
+      const images = [];
+      function createProgressOverlay(){
+        if(document.getElementById('pdfProgress')) return;
+        const overlay = document.createElement('div');
+        overlay.id = 'pdfProgress';
+        overlay.setAttribute('role','status');
+        const box = document.createElement('div');
+        box.className = 'pdf-progress-box';
+        const title = document.createElement('div');
+        title.className = 'pdf-progress-title';
+        title.textContent = 'Building game session...';
+        box.appendChild(title);
+        const progressWrap = document.createElement('div');
+        progressWrap.className = 'pdf-progress-bar';
+        const progressFill = document.createElement('div');
+        progressFill.id = 'pdfProgressFill';
+        progressFill.className = 'pdf-progress-fill';
+        progressWrap.appendChild(progressFill);
+        box.appendChild(progressWrap);
+        const pct = document.createElement('div');
+        pct.id = 'pdfProgressPct';
+        pct.className = 'pdf-progress-pct';
+        pct.textContent = '0%';
+        box.appendChild(pct);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+      }
+      function updateProgress(p){
+        const fill = document.getElementById('pdfProgressFill');
+        const pct = document.getElementById('pdfProgressPct');
+        if(fill) fill.style.width = Math.max(0, Math.min(100, Math.round(p))) + '%';
+        if(pct) pct.textContent = Math.max(0, Math.min(100, Math.round(p))) + '%';
+      }
+      function removeProgressOverlay(){
+        const el = document.getElementById('pdfProgress');
+        if(el) el.remove();
+      }
+
+      createProgressOverlay();
+
+      // Build images and collect unit metadata
+      const unitMetadata = [];
+      for(const [i, u] of orderedUnique.entries()){
+        try{
+          images.push(await renderPdfToPng(getPdfPath(u)));
+          // Extract PDF filename from PDF_MAP, which should match JSON filename
+          const pdfFileName = PDF_MAP[u.id] || (encodeURIComponent(u.name) + '.pdf');
+          const jsonFileName = pdfFileName.replace('.pdf', '.json');
+          unitMetadata.push({
+            unit: u,
+            pdfFileName: pdfFileName,
+            jsonFileName: jsonFileName,
+          });
+        } finally {
+          const pct = ((i + 1) / orderedUnique.length) * 100;
+          updateProgress(pct);
+        }
+      }
+
+      const doc = new jsPDF({orientation:'landscape', unit:'in', format:[11,8.5]});
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const baseCols = 3;
+      const slotW = pageW / baseCols;
+
+      let colCursor = 0;
+      let pageIndex = 0;
+      const pageMap = []; // Track which unit appears on which page/column
+
+      for(let i = 0; i < images.length; i++){
+        const img = images[i];
+        let reqSlots = Math.max(1, Math.round(img.widthInches / slotW));
+        if(reqSlots > baseCols) reqSlots = baseCols;
+
+        if(reqSlots > (baseCols - colCursor)){
+          doc.addPage([pageW, pageH], 'landscape');
+          pageIndex++;
+          colCursor = 0;
+        }
+
+        const x = colCursor * slotW;
+        let drawW = reqSlots * slotW;
+        const ptsW = img.pageWidthPts || (img.widthInches * 72);
+        const ptsH = img.pageHeightPts || (img.heightInches * 72);
+        const aspect = ptsH / ptsW;
+        let drawH = drawW * aspect;
+
+        if(drawH > pageH){
+          const scaleFactor = pageH / drawH;
+          drawH = pageH;
+          drawW = drawW * scaleFactor;
+        }
+
+        const y = Math.max(0, (pageH - drawH) / 2);
+        doc.addImage(img.dataUrl, 'PNG', x, y, drawW, drawH);
+
+        // Record this unit's position in the combined PDF
+        pageMap.push({
+          unitIndex: i,
+          pageIndex: pageIndex,
+          col: colCursor,
+          x: x,
+          y: y,
+          width: drawW,
+          height: drawH,
+          metadata: unitMetadata[i],
+        });
+
+        colCursor += reqSlots;
+        if(colCursor >= baseCols){
+          if(i < images.length - 1){
+            doc.addPage([pageW, pageH], 'landscape');
+            pageIndex++;
+          }
+          colCursor = 0;
+        }
+      }
+
+      const blob = doc.output('blob');
+      const pdfUrl = URL.createObjectURL(blob);
+
+      // Pass PDF URL and metadata to the viewer
+      const gameData = {
+        pdfUrl: pdfUrl,
+        pageMap: pageMap,
+        unitMetadata: unitMetadata,
+        pageSize: {
+          width: pageW,
+          height: pageH,
+        },
+      };
+
+      // Open the viewer and pass data via sessionStorage
+      sessionStorage.setItem('gameSessionData', JSON.stringify(gameData));
+      window.open('play-game.html?v=' + Date.now(), '_blank');
+
+      try{ removeProgressOverlay(); } catch(e){ /* ignore */ }
+      if(playGameBtn) playGameBtn.disabled = false;
+
+    } catch(err){
+      try{ removeProgressOverlay(); } catch(e){ /* ignore */ }
+      if(playGameBtn) playGameBtn.disabled = false;
+      console.error('Error building game session', err);
+      alert('Error building game session: ' + (err && err.message));
     }
   });
 
