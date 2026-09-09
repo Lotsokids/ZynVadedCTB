@@ -220,7 +220,7 @@
   m['attachments-minigun'] = 'Minigungrub.pdf';
   m['attachments-rocket'] = 'Rocketgrub.pdf';
   m['attachments-shield'] = 'Shieldgrub.pdf';
-  m['attachments-lbwtank'] = 'LBWtankgrub.pdf';
+  m['attachments-lbwtank'] = 'LBWTankGrub.pdf';
   m['attachments-grubitor'] = 'GrubItor.pdf';
 
 
