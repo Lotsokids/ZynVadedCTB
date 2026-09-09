@@ -187,7 +187,7 @@
     m['mercz-amus-2'] = 'Amusthehunter.pdf';
     m['mercz-balodek'] = 'Balodek.pdf';
     m['mercz-capzmerica'] = 'Capzmerica.pdf';
-    m['mercz-capzmerica-2'] = 'CapZMerica.pdf';
+    m['mercz-capzmerica-2'] = 'Capzmerica.pdf';
     m['mercz-dash'] = 'Dash.pdf';
     m['mercz-deviant'] = 'Deviant.pdf';
     m['mercz-dezell'] = 'Dezell.pdf';
